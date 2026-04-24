@@ -1,0 +1,750 @@
+{
+  "rooms": [
+    {
+      "id": "r001",
+      "name": "第1会議室",
+      "location": "本社3F",
+      "capacity": 10,
+      "equipment": "プロジェクター, ホワイトボード"
+    },
+    {
+      "id": "r002",
+      "name": "第2会議室",
+      "location": "本社3F",
+      "capacity": 6,
+      "equipment": "モニター"
+    },
+    {
+      "id": "r003",
+      "name": "第3会議室",
+      "location": "本社3F",
+      "capacity": 4,
+      "equipment": "ホワイトボード"
+    },
+    {
+      "id": "r004",
+      "name": "大会議室A",
+      "location": "本社5F",
+      "capacity": 30,
+      "equipment": "プロジェクター, マイク, Web会議システム"
+    },
+    {
+      "id": "r005",
+      "name": "大会議室B",
+      "location": "本社5F",
+      "capacity": 20,
+      "equipment": "プロジェクター, マイク"
+    },
+    {
+      "id": "r006",
+      "name": "役員会議室",
+      "location": "本社7F",
+      "capacity": 12,
+      "equipment": "プロジェクター, Web会議システム, TV会議"
+    },
+    {
+      "id": "r007",
+      "name": "プロジェクトルーム1",
+      "location": "本社4F",
+      "capacity": 8,
+      "equipment": "ホワイトボード, モニター"
+    },
+    {
+      "id": "r008",
+      "name": "プロジェクトルーム2",
+      "location": "本社4F",
+      "capacity": 8,
+      "equipment": "ホワイトボード, モニター"
+    },
+    {
+      "id": "r009",
+      "name": "ミーティングブース1",
+      "location": "本社2F",
+      "capacity": 2,
+      "equipment": "-"
+    },
+    {
+      "id": "r010",
+      "name": "ミーティングブース2",
+      "location": "本社2F",
+      "capacity": 2,
+      "equipment": "-"
+    },
+    {
+      "id": "r011",
+      "name": "研修室",
+      "location": "別館1F",
+      "capacity": 40,
+      "equipment": "プロジェクター, マイク, ホワイトボード"
+    },
+    {
+      "id": "r012",
+      "name": "応接室",
+      "location": "本社1F",
+      "capacity": 6,
+      "equipment": "TV"
+    },
+    {
+      "id": "r013",
+      "name": "集中ブース1",
+      "location": "本社2F",
+      "capacity": 1,
+      "equipment": "有線LAN"
+    },
+    {
+      "id": "r014",
+      "name": "集中ブース2",
+      "location": "本社2F",
+      "capacity": 1,
+      "equipment": "有線LAN"
+    },
+    {
+      "id": "r015",
+      "name": "集中ブース3",
+      "location": "本社2F",
+      "capacity": 1,
+      "equipment": "有線LAN"
+    },
+    {
+      "id": "r016",
+      "name": "集中ブース4",
+      "location": "本社4F",
+      "capacity": 1,
+      "equipment": "-"
+    },
+    {
+      "id": "r017",
+      "name": "集中ブース5",
+      "location": "本社4F",
+      "capacity": 1,
+      "equipment": "-"
+    },
+    {
+      "id": "r018",
+      "name": "集中ブース6",
+      "location": "本社6F",
+      "capacity": 1,
+      "equipment": "-"
+    },
+    {
+      "id": "r019",
+      "name": "集中ブース7",
+      "location": "本社6F",
+      "capacity": 1,
+      "equipment": "-"
+    },
+    {
+      "id": "r020",
+      "name": "ラウンジA",
+      "location": "本社1F",
+      "capacity": 15,
+      "equipment": "モニター"
+    },
+    {
+      "id": "r021",
+      "name": "ラウンジB",
+      "location": "本社1F",
+      "capacity": 15,
+      "equipment": "モニター"
+    },
+    {
+      "id": "r022",
+      "name": "コラボスペース1",
+      "location": "本社3F",
+      "capacity": 12,
+      "equipment": "ホワイトボード, モニター"
+    },
+    {
+      "id": "r023",
+      "name": "コラボスペース2",
+      "location": "本社4F",
+      "capacity": 12,
+      "equipment": "ホワイトボード, モニター"
+    },
+    {
+      "id": "r024",
+      "name": "商談室1",
+      "location": "本社1F",
+      "capacity": 4,
+      "equipment": "TV, モニター"
+    },
+    {
+      "id": "r025",
+      "name": "商談室2",
+      "location": "本社1F",
+      "capacity": 4,
+      "equipment": "TV, モニター"
+    },
+    {
+      "id": "r026",
+      "name": "商談室3",
+      "location": "本社1F",
+      "capacity": 6,
+      "equipment": "TV, モニター"
+    },
+    {
+      "id": "r027",
+      "name": "受付ミーティングルーム",
+      "location": "本社1F",
+      "capacity": 3,
+      "equipment": "-"
+    },
+    {
+      "id": "r028",
+      "name": "第4会議室",
+      "location": "本社3F",
+      "capacity": 8,
+      "equipment": "モニター"
+    },
+    {
+      "id": "r029",
+      "name": "第5会議室",
+      "location": "本社3F",
+      "capacity": 6,
+      "equipment": "ホワイトボード"
+    },
+    {
+      "id": "r030",
+      "name": "プロジェクトルーム3",
+      "location": "本社4F",
+      "capacity": 10,
+      "equipment": "ホワイトボード, モニター"
+    },
+    {
+      "id": "r031",
+      "name": "プロジェクトルーム4",
+      "location": "本社4F",
+      "capacity": 10,
+      "equipment": "ホワイトボード, モニター, Web会議システム"
+    },
+    {
+      "id": "r032",
+      "name": "大会議室C",
+      "location": "本社5F",
+      "capacity": 25,
+      "equipment": "プロジェクター, マイク, Web会議システム"
+    },
+    {
+      "id": "r033",
+      "name": "セミナールーム",
+      "location": "本社5F",
+      "capacity": 60,
+      "equipment": "プロジェクター, マイク, 収録設備"
+    },
+    {
+      "id": "r034",
+      "name": "トレーニングルーム1",
+      "location": "別館2F",
+      "capacity": 20,
+      "equipment": "プロジェクター, 研修用PC複数"
+    },
+    {
+      "id": "r035",
+      "name": "トレーニングルーム2",
+      "location": "別館2F",
+      "capacity": 20,
+      "equipment": "プロジェクター, 研修用PC複数"
+    },
+    {
+      "id": "r036",
+      "name": "ワークショップルーム",
+      "location": "別館3F",
+      "capacity": 30,
+      "equipment": "ホワイトボード複数, プロジェクター"
+    },
+    {
+      "id": "r037",
+      "name": "関西支社会議室A",
+      "location": "関西支社3F",
+      "capacity": 10,
+      "equipment": "プロジェクター, Web会議システム"
+    },
+    {
+      "id": "r038",
+      "name": "関西支社会議室B",
+      "location": "関西支社3F",
+      "capacity": 6,
+      "equipment": "モニター"
+    },
+    {
+      "id": "r039",
+      "name": "東北支社会議室",
+      "location": "東北支社2F",
+      "capacity": 8,
+      "equipment": "プロジェクター, Web会議システム"
+    },
+    {
+      "id": "r040",
+      "name": "九州支社会議室",
+      "location": "九州支社2F",
+      "capacity": 8,
+      "equipment": "プロジェクター, Web会議システム"
+    },
+    {
+      "id": "r041",
+      "name": "経営会議室",
+      "location": "本社7F",
+      "capacity": 15,
+      "equipment": "プロジェクター, Web会議システム"
+    },
+    {
+      "id": "r042",
+      "name": "来客用ラウンジ",
+      "location": "本社1F",
+      "capacity": 8,
+      "equipment": "TV, ソファー"
+    }
+  ],
+  "reservations": [
+    {
+      "id": "res001",
+      "roomId": "r001",
+      "date": "2026-04-20",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "attendeeCount": 5,
+      "meetingName": "週次定例",
+      "reservedBy": "user",
+      "participants": "山田, 佐藤, 鈴木, 田中, 高橋"
+    },
+    {
+      "id": "res002",
+      "roomId": "r004",
+      "date": "2026-04-20",
+      "startTime": "14:00",
+      "endTime": "16:00",
+      "attendeeCount": 20,
+      "meetingName": "全社説明会",
+      "reservedBy": "admin",
+      "participants": "全部門長"
+    },
+    {
+      "id": "res003",
+      "roomId": "r007",
+      "date": "2026-04-21",
+      "startTime": "13:00",
+      "endTime": "15:00",
+      "attendeeCount": 6,
+      "meetingName": "新商品レビュー",
+      "reservedBy": "user",
+      "participants": "開発チーム"
+    },
+    {
+      "id": "res004",
+      "roomId": "r006",
+      "date": "2026-04-22",
+      "startTime": "09:00",
+      "endTime": "10:30",
+      "attendeeCount": 8,
+      "meetingName": "役員ミーティング",
+      "reservedBy": "admin",
+      "participants": "役員一同"
+    },
+    {
+      "roomId": "r001",
+      "date": "2026-04-20",
+      "startTime": "10:30",
+      "endTime": "11:30",
+      "attendeeCount": 2,
+      "meetingName": "テスト",
+      "reservedBy": "user",
+      "participants": "中川",
+      "id": "resmo76f6qoo7dmz7"
+    }
+  ],
+  "devices": [
+    {
+      "id": "d001",
+      "name": "ノートPC-01",
+      "location": "本社3F IT室",
+      "managementNumber": "PC-2023-001",
+      "type": "ノートPC",
+      "status": "available"
+    },
+    {
+      "id": "d002",
+      "name": "ノートPC-02",
+      "location": "本社3F IT室",
+      "managementNumber": "PC-2023-002",
+      "type": "ノートPC",
+      "status": "inUse"
+    },
+    {
+      "id": "d003",
+      "name": "ノートPC-03",
+      "location": "本社3F IT室",
+      "managementNumber": "PC-2023-003",
+      "type": "ノートPC",
+      "status": "available"
+    },
+    {
+      "id": "d004",
+      "name": "ノートPC-04",
+      "location": "本社3F IT室",
+      "managementNumber": "PC-2024-001",
+      "type": "ノートPC",
+      "status": "maintenance"
+    },
+    {
+      "id": "d005",
+      "name": "プロジェクター-A",
+      "location": "本社5F 備品庫",
+      "managementNumber": "PJ-2022-001",
+      "type": "プロジェクター",
+      "status": "available"
+    },
+    {
+      "id": "d006",
+      "name": "プロジェクター-B",
+      "location": "本社5F 備品庫",
+      "managementNumber": "PJ-2022-002",
+      "type": "プロジェクター",
+      "status": "inUse"
+    },
+    {
+      "id": "d007",
+      "name": "Web会議カメラ-1",
+      "location": "本社3F IT室",
+      "managementNumber": "WC-2023-001",
+      "type": "Web会議機器",
+      "status": "available"
+    },
+    {
+      "id": "d008",
+      "name": "Web会議マイク-1",
+      "location": "本社3F IT室",
+      "managementNumber": "WM-2023-001",
+      "type": "Web会議機器",
+      "status": "available"
+    },
+    {
+      "id": "d009",
+      "name": "モバイルモニター-1",
+      "location": "本社3F IT室",
+      "managementNumber": "MN-2024-001",
+      "type": "モニター",
+      "status": "available"
+    },
+    {
+      "id": "d010",
+      "name": "モバイルモニター-2",
+      "location": "本社3F IT室",
+      "managementNumber": "MN-2024-002",
+      "type": "モニター",
+      "status": "inUse"
+    },
+    {
+      "id": "d011",
+      "name": "ポインター-1",
+      "location": "本社5F 備品庫",
+      "managementNumber": "PT-2021-001",
+      "type": "その他",
+      "status": "available"
+    },
+    {
+      "id": "d012",
+      "name": "スピーカー-1",
+      "location": "本社5F 備品庫",
+      "managementNumber": "SP-2022-001",
+      "type": "その他",
+      "status": "available"
+    },
+    {
+      "id": "d013",
+      "name": "ノートPC-05",
+      "location": "本社3F IT室",
+      "managementNumber": "PC-2024-002",
+      "type": "ノートPC",
+      "status": "available"
+    },
+    {
+      "id": "d014",
+      "name": "ノートPC-06",
+      "location": "本社3F IT室",
+      "managementNumber": "PC-2024-003",
+      "type": "ノートPC",
+      "status": "available"
+    },
+    {
+      "id": "d015",
+      "name": "ノートPC-07",
+      "location": "本社3F IT室",
+      "managementNumber": "PC-2024-004",
+      "type": "ノートPC",
+      "status": "inUse"
+    },
+    {
+      "id": "d016",
+      "name": "ノートPC-08",
+      "location": "本社3F IT室",
+      "managementNumber": "PC-2024-005",
+      "type": "ノートPC",
+      "status": "available"
+    },
+    {
+      "id": "d017",
+      "name": "ノートPC-09",
+      "location": "本社3F IT室",
+      "managementNumber": "PC-2024-006",
+      "type": "ノートPC",
+      "status": "available"
+    },
+    {
+      "id": "d018",
+      "name": "ノートPC-10",
+      "location": "別館1F",
+      "managementNumber": "PC-2024-007",
+      "type": "ノートPC",
+      "status": "available"
+    },
+    {
+      "id": "d019",
+      "name": "ノートPC-11",
+      "location": "別館1F",
+      "managementNumber": "PC-2024-008",
+      "type": "ノートPC",
+      "status": "maintenance"
+    },
+    {
+      "id": "d020",
+      "name": "ノートPC-12",
+      "location": "別館1F",
+      "managementNumber": "PC-2024-009",
+      "type": "ノートPC",
+      "status": "available"
+    },
+    {
+      "id": "d021",
+      "name": "プロジェクター-C",
+      "location": "本社3F 備品庫",
+      "managementNumber": "PJ-2023-003",
+      "type": "プロジェクター",
+      "status": "available"
+    },
+    {
+      "id": "d022",
+      "name": "プロジェクター-D",
+      "location": "本社3F 備品庫",
+      "managementNumber": "PJ-2023-004",
+      "type": "プロジェクター",
+      "status": "available"
+    },
+    {
+      "id": "d023",
+      "name": "プロジェクター-E",
+      "location": "別館1F",
+      "managementNumber": "PJ-2023-005",
+      "type": "プロジェクター",
+      "status": "available"
+    },
+    {
+      "id": "d024",
+      "name": "プロジェクター-F",
+      "location": "別館1F",
+      "managementNumber": "PJ-2024-001",
+      "type": "プロジェクター",
+      "status": "inUse"
+    },
+    {
+      "id": "d025",
+      "name": "モバイルプロジェクター-1",
+      "location": "本社3F IT室",
+      "managementNumber": "PJ-2024-002",
+      "type": "プロジェクター",
+      "status": "available"
+    },
+    {
+      "id": "d026",
+      "name": "モバイルプロジェクター-2",
+      "location": "本社3F IT室",
+      "managementNumber": "PJ-2024-003",
+      "type": "プロジェクター",
+      "status": "available"
+    },
+    {
+      "id": "d027",
+      "name": "Web会議カメラ-2",
+      "location": "本社3F IT室",
+      "managementNumber": "WC-2023-002",
+      "type": "Web会議機器",
+      "status": "available"
+    },
+    {
+      "id": "d028",
+      "name": "Web会議カメラ-3",
+      "location": "本社3F IT室",
+      "managementNumber": "WC-2024-001",
+      "type": "Web会議機器",
+      "status": "inUse"
+    },
+    {
+      "id": "d029",
+      "name": "Web会議マイク-2",
+      "location": "本社3F IT室",
+      "managementNumber": "WM-2023-002",
+      "type": "Web会議機器",
+      "status": "available"
+    },
+    {
+      "id": "d030",
+      "name": "Web会議マイク-3",
+      "location": "本社3F IT室",
+      "managementNumber": "WM-2024-001",
+      "type": "Web会議機器",
+      "status": "maintenance"
+    },
+    {
+      "id": "d031",
+      "name": "Web会議スピーカー-1",
+      "location": "本社3F IT室",
+      "managementNumber": "WS-2023-001",
+      "type": "Web会議機器",
+      "status": "available"
+    },
+    {
+      "id": "d032",
+      "name": "Web会議スピーカー-2",
+      "location": "本社3F IT室",
+      "managementNumber": "WS-2024-001",
+      "type": "Web会議機器",
+      "status": "available"
+    },
+    {
+      "id": "d033",
+      "name": "ヘッドセット-1",
+      "location": "本社3F IT室",
+      "managementNumber": "HS-2024-001",
+      "type": "その他",
+      "status": "available"
+    },
+    {
+      "id": "d034",
+      "name": "ヘッドセット-2",
+      "location": "本社3F IT室",
+      "managementNumber": "HS-2024-002",
+      "type": "その他",
+      "status": "inUse"
+    },
+    {
+      "id": "d035",
+      "name": "ヘッドセット-3",
+      "location": "本社3F IT室",
+      "managementNumber": "HS-2024-003",
+      "type": "その他",
+      "status": "available"
+    },
+    {
+      "id": "d036",
+      "name": "モバイルモニター-3",
+      "location": "本社3F IT室",
+      "managementNumber": "MN-2024-003",
+      "type": "モニター",
+      "status": "available"
+    },
+    {
+      "id": "d037",
+      "name": "モバイルモニター-4",
+      "location": "本社3F IT室",
+      "managementNumber": "MN-2024-004",
+      "type": "モニター",
+      "status": "available"
+    },
+    {
+      "id": "d038",
+      "name": "4Kモニター-1",
+      "location": "本社5F 備品庫",
+      "managementNumber": "MN-2024-005",
+      "type": "モニター",
+      "status": "available"
+    },
+    {
+      "id": "d039",
+      "name": "ワイヤレスキーボード-1",
+      "location": "本社3F IT室",
+      "managementNumber": "KB-2023-001",
+      "type": "その他",
+      "status": "available"
+    },
+    {
+      "id": "d040",
+      "name": "ワイヤレスマウス-1",
+      "location": "本社3F IT室",
+      "managementNumber": "MS-2023-001",
+      "type": "その他",
+      "status": "available"
+    },
+    {
+      "id": "d041",
+      "name": "ポインター-2",
+      "location": "本社5F 備品庫",
+      "managementNumber": "PT-2022-001",
+      "type": "その他",
+      "status": "available"
+    },
+    {
+      "id": "d042",
+      "name": "スピーカー-2",
+      "location": "本社5F 備品庫",
+      "managementNumber": "SP-2023-001",
+      "type": "その他",
+      "status": "inUse"
+    }
+  ],
+  "loans": [
+    {
+      "id": "ln001",
+      "deviceId": "d002",
+      "borrowedBy": "user",
+      "borrowedAt": "2026-04-20T08:00:00.000Z"
+    },
+    {
+      "id": "ln002",
+      "deviceId": "d006",
+      "borrowedBy": "admin",
+      "borrowedAt": "2026-04-19T10:00:00.000Z"
+    },
+    {
+      "id": "ln003",
+      "deviceId": "d010",
+      "borrowedBy": "user",
+      "borrowedAt": "2026-04-20T07:00:00.000Z"
+    }
+  ],
+  "users": [
+    {
+      "id": "u001",
+      "username": "admin",
+      "password": "admin123",
+      "displayName": "管理者",
+      "role": "admin"
+    },
+    {
+      "id": "u002",
+      "username": "user",
+      "password": "user123",
+      "displayName": "山田太郎",
+      "role": "user"
+    },
+    {
+      "id": "u003",
+      "username": "sato",
+      "password": "sato123",
+      "displayName": "佐藤花子",
+      "role": "user"
+    },
+    {
+      "id": "u004",
+      "username": "suzuki",
+      "password": "suzuki123",
+      "displayName": "鈴木次郎",
+      "role": "user"
+    },
+    {
+      "username": "nakagawa",
+      "password": "password",
+      "displayName": "なかがわ",
+      "role": "user",
+      "id": "umo76oy1h29t47u"
+    }
+  ]
+}
