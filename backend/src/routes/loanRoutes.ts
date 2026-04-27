@@ -1,7 +1,6 @@
 import { Router } from 'express';
 import loanController from '../controllers/LoanController';
 import { authenticate } from '../middleware/authenticate';
-import { requireAdmin } from '../middleware/requireAdmin';
 
 const router = Router();
 

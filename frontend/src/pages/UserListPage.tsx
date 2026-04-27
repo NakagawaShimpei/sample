@@ -1,13 +1,13 @@
-import React from 'react';
-import { useData } from '../contexts/DataContext';
 import { useAuth } from '../contexts/AuthContext';
+import { useData } from '../contexts/DataContext';
 
 export default function UserListPage() {
   const { users, deleteUser } = useData();
   const { currentUser } = useAuth();
 
   const handleDelete = async (id: string, name: string) => {
-    if (!window.confirm(`ユーザー「${name}」を削除します。よろしいですか？`)) return;
+    if (!window.confirm(`ユーザー「${name}」を削除します。よろしいですか？`))
+      return;
     try {
       await deleteUser(id);
     } catch (e) {

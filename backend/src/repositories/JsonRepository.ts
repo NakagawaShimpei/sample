@@ -22,7 +22,10 @@ function writeDb(db: Db): void {
 }
 
 export class JsonRepository<T extends { id: string }> {
-  constructor(private readonly key: string, private readonly prefix: string) {}
+  constructor(
+    private readonly key: string,
+    private readonly prefix: string,
+  ) {}
 
   findAll(): T[] {
     const db = readDb();
@@ -70,7 +73,9 @@ export class JsonRepository<T extends { id: string }> {
   delete(id: string): Promise<void> {
     writeQueue = writeQueue.then(() => {
       const db = readDb();
-      db[this.key] = ((db[this.key] as T[]) ?? []).filter((item) => item.id !== id);
+      db[this.key] = ((db[this.key] as T[]) ?? []).filter(
+        (item) => item.id !== id,
+      );
       writeDb(db);
     });
     return writeQueue;
@@ -79,7 +84,9 @@ export class JsonRepository<T extends { id: string }> {
   deleteWhere(predicate: (item: T) => boolean): Promise<void> {
     writeQueue = writeQueue.then(() => {
       const db = readDb();
-      db[this.key] = ((db[this.key] as T[]) ?? []).filter((item) => !predicate(item));
+      db[this.key] = ((db[this.key] as T[]) ?? []).filter(
+        (item) => !predicate(item),
+      );
       writeDb(db);
     });
     return writeQueue;

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { useNavigate, useParams, Link } from 'react-router-dom';
-import { useData } from '../contexts/DataContext';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { useData } from '../contexts/DataContext';
 
 export default function RoomReservePage() {
   const { roomId } = useParams<{ roomId: string }>();
@@ -30,7 +30,15 @@ export default function RoomReservePage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!date || !startTime || !endTime || !attendeeCount || !meetingName || !reservedBy || !participants) {
+    if (
+      !date ||
+      !startTime ||
+      !endTime ||
+      !attendeeCount ||
+      !meetingName ||
+      !reservedBy ||
+      !participants
+    ) {
       alert('すべての項目を入力してください。');
       return;
     }
@@ -55,37 +63,97 @@ export default function RoomReservePage() {
   return (
     <div>
       <h2>会議室予約</h2>
-      <p>予約対象: <strong>{room.name}</strong> ({room.location} / 定員{room.capacity}名)</p>
+      <p>
+        予約対象: <strong>{room.name}</strong> ({room.location} / 定員
+        {room.capacity}名)
+      </p>
       <form onSubmit={handleSubmit}>
         <table className="form-table">
           <tbody>
             <tr>
-              <th>日付 <span className="req">*</span></th>
-              <td><input type="date" value={date} onChange={(e) => setDate(e.target.value)} /></td>
+              <th>
+                日付 <span className="req">*</span>
+              </th>
+              <td>
+                <input
+                  type="date"
+                  value={date}
+                  onChange={(e) => setDate(e.target.value)}
+                />
+              </td>
             </tr>
             <tr>
-              <th>開始時刻 <span className="req">*</span></th>
-              <td><input type="time" value={startTime} onChange={(e) => setStartTime(e.target.value)} /></td>
+              <th>
+                開始時刻 <span className="req">*</span>
+              </th>
+              <td>
+                <input
+                  type="time"
+                  value={startTime}
+                  onChange={(e) => setStartTime(e.target.value)}
+                />
+              </td>
             </tr>
             <tr>
-              <th>終了時刻 <span className="req">*</span></th>
-              <td><input type="time" value={endTime} onChange={(e) => setEndTime(e.target.value)} /></td>
+              <th>
+                終了時刻 <span className="req">*</span>
+              </th>
+              <td>
+                <input
+                  type="time"
+                  value={endTime}
+                  onChange={(e) => setEndTime(e.target.value)}
+                />
+              </td>
             </tr>
             <tr>
-              <th>人数 <span className="req">*</span></th>
-              <td><input type="number" min="1" value={attendeeCount} onChange={(e) => setAttendeeCount(e.target.value)} /></td>
+              <th>
+                人数 <span className="req">*</span>
+              </th>
+              <td>
+                <input
+                  type="number"
+                  min="1"
+                  value={attendeeCount}
+                  onChange={(e) => setAttendeeCount(e.target.value)}
+                />
+              </td>
             </tr>
             <tr>
-              <th>会議名 <span className="req">*</span></th>
-              <td><input type="text" value={meetingName} onChange={(e) => setMeetingName(e.target.value)} /></td>
+              <th>
+                会議名 <span className="req">*</span>
+              </th>
+              <td>
+                <input
+                  type="text"
+                  value={meetingName}
+                  onChange={(e) => setMeetingName(e.target.value)}
+                />
+              </td>
             </tr>
             <tr>
-              <th>予約者名 <span className="req">*</span></th>
-              <td><input type="text" value={reservedBy} onChange={(e) => setReservedBy(e.target.value)} /></td>
+              <th>
+                予約者名 <span className="req">*</span>
+              </th>
+              <td>
+                <input
+                  type="text"
+                  value={reservedBy}
+                  onChange={(e) => setReservedBy(e.target.value)}
+                />
+              </td>
             </tr>
             <tr>
-              <th>参加者 <span className="req">*</span></th>
-              <td><textarea value={participants} onChange={(e) => setParticipants(e.target.value)} rows={3} /></td>
+              <th>
+                参加者 <span className="req">*</span>
+              </th>
+              <td>
+                <textarea
+                  value={participants}
+                  onChange={(e) => setParticipants(e.target.value)}
+                  rows={3}
+                />
+              </td>
             </tr>
           </tbody>
         </table>

@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
-import mfaService from '../services/MfaService';
-import authService, { TokenPayload } from '../services/AuthService';
-import { userRepository } from '../repositories/UserRepository';
 import { config } from '../config';
+import { userRepository } from '../repositories/UserRepository';
+import authService, { TokenPayload } from '../services/AuthService';
+import mfaService from '../services/MfaService';
 import { UserRecord } from '../types';
 
 const mfaController = {
@@ -26,7 +26,9 @@ const mfaController = {
       return;
     }
     const userId = req.user!.userId;
-    await userRepository.update(userId, { totpSecret: secret } as Partial<UserRecord>);
+    await userRepository.update(userId, {
+      totpSecret: secret,
+    } as Partial<UserRecord>);
     res.json({ message: 'MFA が有効になりました' });
   },
 
@@ -58,7 +60,11 @@ const mfaController = {
     };
     const token = authService.signToken(payload);
     res.cookie('auth_token', token, config.COOKIE_OPTIONS);
-    res.json({ username: pending.username, role: pending.role, displayName: pending.displayName });
+    res.json({
+      username: pending.username,
+      role: pending.role,
+      displayName: pending.displayName,
+    });
   },
 
   // DELETE /api/mfa/disable — removes TOTP secret (disables MFA)

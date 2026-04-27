@@ -1,6 +1,5 @@
-import React from 'react';
-import { useData } from '../contexts/DataContext';
 import { useAuth } from '../contexts/AuthContext';
+import { useData } from '../contexts/DataContext';
 import { DeviceStatus } from '../types';
 
 const statusLabel = (status: DeviceStatus): string => {
@@ -10,12 +9,15 @@ const statusLabel = (status: DeviceStatus): string => {
 };
 
 export default function DeviceListPage() {
-  const { devices, borrowDevice, returnDevice, loans, deleteDevice } = useData();
+  const { devices, borrowDevice, returnDevice, loans, deleteDevice } =
+    useData();
   const { currentUser } = useAuth();
   const isAdmin = currentUser?.role === 'admin';
 
   const isBorrowedByMe = (deviceId: string) =>
-    loans.some((l) => l.deviceId === deviceId && l.borrowedBy === currentUser?.username);
+    loans.some(
+      (l) => l.deviceId === deviceId && l.borrowedBy === currentUser?.username,
+    );
 
   const handleBorrow = async (id: string, name: string) => {
     if (!window.confirm(`「${name}」を貸出します。よろしいですか？`)) return;
@@ -36,7 +38,8 @@ export default function DeviceListPage() {
   };
 
   const handleDelete = async (id: string, name: string) => {
-    if (!window.confirm(`デバイス「${name}」を削除します。よろしいですか？`)) return;
+    if (!window.confirm(`デバイス「${name}」を削除します。よろしいですか？`))
+      return;
     try {
       await deleteDevice(id);
     } catch (e) {
@@ -69,17 +72,29 @@ export default function DeviceListPage() {
               <td>{statusLabel(d.status)}</td>
               <td>
                 {d.status === 'available' && (
-                  <button type="button" className="link-button" onClick={() => handleBorrow(d.id, d.name)}>
+                  <button
+                    type="button"
+                    className="link-button"
+                    onClick={() => handleBorrow(d.id, d.name)}
+                  >
                     貸出
                   </button>
                 )}
                 {d.status === 'inUse' && isBorrowedByMe(d.id) && (
-                  <button type="button" className="link-button" onClick={() => handleReturn(d.id, d.name)}>
+                  <button
+                    type="button"
+                    className="link-button"
+                    onClick={() => handleReturn(d.id, d.name)}
+                  >
                     返却
                   </button>
                 )}
                 {d.status === 'inUse' && !isBorrowedByMe(d.id) && isAdmin && (
-                  <button type="button" className="link-button" onClick={() => handleReturn(d.id, d.name)}>
+                  <button
+                    type="button"
+                    className="link-button"
+                    onClick={() => handleReturn(d.id, d.name)}
+                  >
                     強制返却
                   </button>
                 )}

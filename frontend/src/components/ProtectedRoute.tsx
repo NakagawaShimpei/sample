@@ -23,7 +23,10 @@ export default function ProtectedRoute({ children, requireRole }: Props) {
     return (
       <div className="error-page">
         <h2>アクセス権限がありません</h2>
-        <p>この機能は{requireRole === 'admin' ? '管理者' : '利用者'}のみ利用できます。</p>
+        <p>
+          この機能は{requireRole === 'admin' ? '管理者' : '利用者'}
+          のみ利用できます。
+        </p>
       </div>
     );
   }

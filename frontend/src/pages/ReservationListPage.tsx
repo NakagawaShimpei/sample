@@ -1,6 +1,5 @@
-import React from 'react';
-import { useData } from '../contexts/DataContext';
 import { useAuth } from '../contexts/AuthContext';
+import { useData } from '../contexts/DataContext';
 
 export default function ReservationListPage() {
   const { reservations, rooms, cancelReservation } = useData();
@@ -11,14 +10,18 @@ export default function ReservationListPage() {
     ? reservations
     : reservations.filter((r) => r.reservedBy === currentUser?.username);
 
-  const roomName = (id: string) => rooms.find((r) => r.id === id)?.name || '(削除済み)';
+  const roomName = (id: string) =>
+    rooms.find((r) => r.id === id)?.name || '(削除済み)';
 
   const handleCancel = async (id: string, name: string) => {
-    if (!window.confirm(`予約「${name}」をキャンセルします。よろしいですか？`)) return;
+    if (!window.confirm(`予約「${name}」をキャンセルします。よろしいですか？`))
+      return;
     try {
       await cancelReservation(id);
     } catch (e) {
-      alert('キャンセルに失敗しました: ' + (e instanceof Error ? e.message : ''));
+      alert(
+        'キャンセルに失敗しました: ' + (e instanceof Error ? e.message : ''),
+      );
     }
   };
 
@@ -26,8 +29,10 @@ export default function ReservationListPage() {
     <div>
       <h2>予約一覧</h2>
       <p>
-        {isAdmin ? '全員の予約を表示しています。' : '自分の予約を表示しています。'} (
-        {visible.length} 件)
+        {isAdmin
+          ? '全員の予約を表示しています。'
+          : '自分の予約を表示しています。'}{' '}
+        ({visible.length} 件)
       </p>
       {visible.length === 0 ? (
         <p>予約はありません。</p>
@@ -51,7 +56,9 @@ export default function ReservationListPage() {
                 <td>{r.meetingName}</td>
                 <td>{roomName(r.roomId)}</td>
                 <td>{r.date}</td>
-                <td>{r.startTime} - {r.endTime}</td>
+                <td>
+                  {r.startTime} - {r.endTime}
+                </td>
                 <td>{r.attendeeCount}名</td>
                 <td>{r.reservedBy}</td>
                 <td>{r.participants}</td>

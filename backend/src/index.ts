@@ -1,17 +1,17 @@
-import express from 'express';
-import cors from 'cors';
 import cookieParser from 'cookie-parser';
+import cors from 'cors';
+import express from 'express';
 import helmet from 'helmet';
 import { config } from './config';
 import { auditLog } from './middleware/auditLog';
 import authRoutes from './routes/authRoutes';
-import roomRoutes from './routes/roomRoutes';
-import reservationRoutes from './routes/reservationRoutes';
 import deviceRoutes from './routes/deviceRoutes';
-import loanRoutes from './routes/loanRoutes';
-import userRoutes from './routes/userRoutes';
 import historyRoutes from './routes/historyRoutes';
+import loanRoutes from './routes/loanRoutes';
 import mfaRoutes from './routes/mfaRoutes';
+import reservationRoutes from './routes/reservationRoutes';
+import roomRoutes from './routes/roomRoutes';
+import userRoutes from './routes/userRoutes';
 
 const app = express();
 

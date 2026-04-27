@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import { userRepository } from '../repositories/UserRepository';
 import { config } from '../config';
+import { userRepository } from '../repositories/UserRepository';
 import { Role } from '../types';
 
 export interface TokenPayload {
@@ -32,16 +32,27 @@ const authService = {
 
     if (user.totpSecret) {
       const mfaToken = jwt.sign(
-        { type: 'mfa-pending', userId: user.id, username: user.username, role: user.role, displayName: user.displayName },
+        {
+          type: 'mfa-pending',
+          userId: user.id,
+          username: user.username,
+          role: user.role,
+          displayName: user.displayName,
+        },
         config.JWT_SECRET,
-        { expiresIn: '5m' }
+        { expiresIn: '5m' },
       );
       return { mfaRequired: true, mfaToken };
     }
 
     return {
       mfaRequired: false,
-      user: { id: user.id, username: user.username, role: user.role, displayName: user.displayName },
+      user: {
+        id: user.id,
+        username: user.username,
+        role: user.role,
+        displayName: user.displayName,
+      },
     };
   },
 
@@ -59,7 +70,9 @@ const authService = {
 
   verifyMfaToken(token: string): (TokenPayload & { type: string }) | null {
     try {
-      const payload = jwt.verify(token, config.JWT_SECRET) as TokenPayload & { type: string };
+      const payload = jwt.verify(token, config.JWT_SECRET) as TokenPayload & {
+        type: string;
+      };
       if (payload.type !== 'mfa-pending') return null;
       return payload;
     } catch {

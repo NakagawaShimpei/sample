@@ -1,7 +1,11 @@
-import { Request, Response, NextFunction } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import authService from '../services/AuthService';
 
-export function authenticate(req: Request, res: Response, next: NextFunction): void {
+export function authenticate(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): void {
   const token = req.cookies?.auth_token as string | undefined;
   if (!token) {
     res.status(401).json({ error: 'Unauthorized' });

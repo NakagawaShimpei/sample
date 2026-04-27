@@ -9,9 +9,9 @@ function toMinutes(time: string): number {
 function hasOverlap(a: Reservation, b: Omit<Reservation, 'id'>): boolean {
   if (a.roomId !== b.roomId || a.date !== b.date) return false;
   const aStart = toMinutes(a.startTime);
-  const aEnd   = toMinutes(a.endTime);
+  const aEnd = toMinutes(a.endTime);
   const bStart = toMinutes(b.startTime);
-  const bEnd   = toMinutes(b.endTime);
+  const bEnd = toMinutes(b.endTime);
   return aStart < bEnd && bStart < aEnd;
 }
 
@@ -24,7 +24,9 @@ const reservationService = {
     const existing = reservationRepository.findAll();
     const conflict = existing.find((r) => hasOverlap(r, data));
     if (conflict) {
-      throw Object.assign(new Error('指定の日時はすでに予約が入っています'), { status: 409 });
+      throw Object.assign(new Error('指定の日時はすでに予約が入っています'), {
+        status: 409,
+      });
     }
     return reservationRepository.create(data);
   },

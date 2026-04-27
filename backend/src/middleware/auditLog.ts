@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import fs from 'fs';
 import path from 'path';
 
@@ -6,7 +6,11 @@ const LOG_PATH = path.join(__dirname, '../../data/audit.log');
 
 const SKIP_METHODS = new Set(['GET', 'HEAD', 'OPTIONS']);
 
-export function auditLog(req: Request, res: Response, next: NextFunction): void {
+export function auditLog(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): void {
   if (SKIP_METHODS.has(req.method)) {
     next();
     return;
@@ -25,7 +29,9 @@ export function auditLog(req: Request, res: Response, next: NextFunction): void 
       body: sanitizeBody(req.body),
     };
     const line = JSON.stringify(entry) + '\n';
-    fs.appendFile(LOG_PATH, line, () => {/* fire-and-forget */});
+    fs.appendFile(LOG_PATH, line, () => {
+      /* fire-and-forget */
+    });
 
     return originalEnd(...args);
   };

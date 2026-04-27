@@ -33,7 +33,9 @@ export default function UserRegisterPage() {
         <table className="form-table">
           <tbody>
             <tr>
-              <th>ユーザー名 <span className="req">*</span></th>
+              <th>
+                ユーザー名 <span className="req">*</span>
+              </th>
               <td>
                 <input
                   type="text"
@@ -43,7 +45,9 @@ export default function UserRegisterPage() {
               </td>
             </tr>
             <tr>
-              <th>パスワード <span className="req">*</span></th>
+              <th>
+                パスワード <span className="req">*</span>
+              </th>
               <td>
                 <input
                   type="password"
@@ -53,7 +57,9 @@ export default function UserRegisterPage() {
               </td>
             </tr>
             <tr>
-              <th>表示名 <span className="req">*</span></th>
+              <th>
+                表示名 <span className="req">*</span>
+              </th>
               <td>
                 <input
                   type="text"

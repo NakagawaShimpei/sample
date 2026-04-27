@@ -1,5 +1,5 @@
-import { SqliteRepository } from './SqliteRepository';
 import { Room } from '../types';
+import { SqliteRepository } from './SqliteRepository';
 
 class RoomRepository extends SqliteRepository<Room> {
   constructor() {

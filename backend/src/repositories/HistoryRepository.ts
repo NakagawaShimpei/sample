@@ -1,5 +1,5 @@
 import { getDb } from '../database';
-import { ReservationHistory, LoanHistory } from '../types';
+import { LoanHistory, ReservationHistory } from '../types';
 
 export const historyRepository = {
   getReservationHistory(): ReservationHistory[] {
@@ -10,9 +10,9 @@ export const historyRepository = {
   },
 
   getLoanHistory(): LoanHistory[] {
-    const rows = getDb()
-      .prepare(`SELECT data FROM "loanHistory"`)
-      .all() as { data: string }[];
+    const rows = getDb().prepare(`SELECT data FROM "loanHistory"`).all() as {
+      data: string;
+    }[];
     return rows.map((r) => JSON.parse(r.data) as LoanHistory);
   },
 };

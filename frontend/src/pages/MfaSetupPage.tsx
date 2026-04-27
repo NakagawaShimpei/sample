@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 
 type SetupState = 'idle' | 'loading' | 'ready' | 'verifying' | 'done' | 'error';
 
@@ -74,15 +74,32 @@ export default function MfaSetupPage() {
 
       {state === 'idle' && (
         <div>
-          <p>Google Authenticator などの認証アプリを使って二段階認証を設定できます。</p>
+          <p>
+            Google Authenticator
+            などの認証アプリを使って二段階認証を設定できます。
+          </p>
           <button onClick={fetchSetup}>MFA を設定する</button>
           <hr style={{ margin: '2rem 0' }} />
           <h3>MFA の無効化</h3>
           <p>すでに MFA を設定している場合、以下から無効化できます。</p>
-          <button onClick={handleDisable} style={{ background: '#dc3545', color: '#fff', border: 'none', padding: '0.5rem 1rem', borderRadius: 4, cursor: 'pointer' }}>
+          <button
+            onClick={handleDisable}
+            style={{
+              background: '#dc3545',
+              color: '#fff',
+              border: 'none',
+              padding: '0.5rem 1rem',
+              borderRadius: 4,
+              cursor: 'pointer',
+            }}
+          >
             MFA を無効にする
           </button>
-          {disableMessage && <p style={{ marginTop: '1rem', color: '#28a745' }}>{disableMessage}</p>}
+          {disableMessage && (
+            <p style={{ marginTop: '1rem', color: '#28a745' }}>
+              {disableMessage}
+            </p>
+          )}
         </div>
       )}
 
@@ -92,13 +109,20 @@ export default function MfaSetupPage() {
         <div>
           <p>① 認証アプリで以下の QR コードをスキャンしてください。</p>
           <div style={{ textAlign: 'center', margin: '1rem 0' }}>
-            <img src={qrCode} alt="MFA QR Code" style={{ width: 200, height: 200 }} />
+            <img
+              src={qrCode}
+              alt="MFA QR Code"
+              style={{ width: 200, height: 200 }}
+            />
           </div>
           <p style={{ fontSize: '0.85rem', color: '#555' }}>
-            QR コードが読み取れない場合は、以下のキーを手動で入力してください:<br />
+            QR コードが読み取れない場合は、以下のキーを手動で入力してください:
+            <br />
             <code style={{ wordBreak: 'break-all' }}>{secret}</code>
           </p>
-          <p>② 認証アプリに表示された 6 桁のコードを入力して確認してください。</p>
+          <p>
+            ② 認証アプリに表示された 6 桁のコードを入力して確認してください。
+          </p>
           <form onSubmit={handleEnable}>
             <input
               type="text"
@@ -108,12 +132,22 @@ export default function MfaSetupPage() {
               placeholder="000000"
               value={code}
               onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))}
-              style={{ fontSize: '1.5rem', letterSpacing: '0.3rem', textAlign: 'center', width: 160, display: 'block', margin: '0.5rem 0' }}
+              style={{
+                fontSize: '1.5rem',
+                letterSpacing: '0.3rem',
+                textAlign: 'center',
+                width: 160,
+                display: 'block',
+                margin: '0.5rem 0',
+              }}
               autoFocus
               autoComplete="one-time-code"
             />
             {message && <p style={{ color: '#dc3545' }}>{message}</p>}
-            <button type="submit" disabled={state === 'verifying' || code.length !== 6}>
+            <button
+              type="submit"
+              disabled={state === 'verifying' || code.length !== 6}
+            >
               {state === 'verifying' ? '確認中...' : '有効にする'}
             </button>
           </form>
@@ -124,9 +158,7 @@ export default function MfaSetupPage() {
         <p style={{ color: '#28a745', fontWeight: 'bold' }}>{message}</p>
       )}
 
-      {state === 'error' && (
-        <p style={{ color: '#dc3545' }}>{message}</p>
-      )}
+      {state === 'error' && <p style={{ color: '#dc3545' }}>{message}</p>}
     </div>
   );
 }

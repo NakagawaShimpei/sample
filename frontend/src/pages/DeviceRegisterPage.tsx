@@ -3,7 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import { useData } from '../contexts/DataContext';
 import { DeviceType } from '../types';
 
-const deviceTypes: DeviceType[] = ['ノートPC', 'プロジェクター', 'Web会議機器', 'モニター', 'その他'];
+const deviceTypes: DeviceType[] = [
+  'ノートPC',
+  'プロジェクター',
+  'Web会議機器',
+  'モニター',
+  'その他',
+];
 
 export default function DeviceRegisterPage() {
   const { addDevice } = useData();
@@ -41,24 +47,55 @@ export default function DeviceRegisterPage() {
         <table className="form-table">
           <tbody>
             <tr>
-              <th>デバイス名 <span className="req">*</span></th>
-              <td><input type="text" value={name} onChange={(e) => setName(e.target.value)} /></td>
-            </tr>
-            <tr>
-              <th>場所 <span className="req">*</span></th>
-              <td><input type="text" value={location} onChange={(e) => setLocation(e.target.value)} /></td>
-            </tr>
-            <tr>
-              <th>管理番号 <span className="req">*</span></th>
-              <td><input type="text" value={managementNumber} onChange={(e) => setManagementNumber(e.target.value)} /></td>
-            </tr>
-            <tr>
-              <th>デバイス種別 <span className="req">*</span></th>
+              <th>
+                デバイス名 <span className="req">*</span>
+              </th>
               <td>
-                <select value={type} onChange={(e) => setType(e.target.value as DeviceType)}>
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                />
+              </td>
+            </tr>
+            <tr>
+              <th>
+                場所 <span className="req">*</span>
+              </th>
+              <td>
+                <input
+                  type="text"
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value)}
+                />
+              </td>
+            </tr>
+            <tr>
+              <th>
+                管理番号 <span className="req">*</span>
+              </th>
+              <td>
+                <input
+                  type="text"
+                  value={managementNumber}
+                  onChange={(e) => setManagementNumber(e.target.value)}
+                />
+              </td>
+            </tr>
+            <tr>
+              <th>
+                デバイス種別 <span className="req">*</span>
+              </th>
+              <td>
+                <select
+                  value={type}
+                  onChange={(e) => setType(e.target.value as DeviceType)}
+                >
                   <option value="">選択してください</option>
                   {deviceTypes.map((t) => (
-                    <option key={t} value={t}>{t}</option>
+                    <option key={t} value={t}>
+                      {t}
+                    </option>
                   ))}
                 </select>
               </td>

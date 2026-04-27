@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt';
 import { userRepository } from '../repositories/UserRepository';
-import { UserRecord, Role } from '../types';
+import { Role, UserRecord } from '../types';
 
 const SALT_ROUNDS = 12;
 
@@ -16,7 +16,12 @@ const userService = {
     return userRepository.findAll().map(omitPassword);
   },
 
-  async create(data: { username: string; password: string; displayName: string; role?: Role }): Promise<PublicUserRecord> {
+  async create(data: {
+    username: string;
+    password: string;
+    displayName: string;
+    role?: Role;
+  }): Promise<PublicUserRecord> {
     const hashed = await bcrypt.hash(data.password, SALT_ROUNDS);
     const created = await userRepository.create({
       username: data.username,

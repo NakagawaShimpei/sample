@@ -1,5 +1,5 @@
-import { loanRepository } from '../repositories/LoanRepository';
 import { deviceRepository } from '../repositories/DeviceRepository';
+import { loanRepository } from '../repositories/LoanRepository';
 import { Loan } from '../types';
 
 const loanService = {

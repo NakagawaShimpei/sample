@@ -1,5 +1,5 @@
-import { SqliteRepository } from './SqliteRepository';
 import { UserRecord } from '../types';
+import { SqliteRepository } from './SqliteRepository';
 
 class UserRepository extends SqliteRepository<UserRecord> {
   constructor() {
@@ -11,7 +11,9 @@ class UserRepository extends SqliteRepository<UserRecord> {
   }
 
   removeTotpSecret(id: string): Promise<void> {
-    return this.update(id, { totpSecret: undefined } as Partial<UserRecord>).then(() => {});
+    return this.update(id, {
+      totpSecret: undefined,
+    } as Partial<UserRecord>).then(() => {});
   }
 }
 

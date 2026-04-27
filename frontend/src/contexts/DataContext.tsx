@@ -1,6 +1,13 @@
-import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
-import { Room, Device, Reservation, Loan, UserRecord } from '../types';
+import {
+  createContext,
+  ReactNode,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from 'react';
 import { api } from '../api';
+import { Device, Loan, Reservation, Room, UserRecord } from '../types';
 import { useAuth } from './AuthContext';
 
 interface NewUser {
@@ -126,7 +133,9 @@ export function DataProvider({ children }: { children: ReactNode }) {
   const returnDevice = async (deviceId: string) => {
     await api.deleteLoanByDevice(deviceId);
     setDevices((prev) =>
-      prev.map((d) => (d.id === deviceId ? { ...d, status: 'available' as const } : d))
+      prev.map((d) =>
+        d.id === deviceId ? { ...d, status: 'available' as const } : d,
+      ),
     );
     setLoans((prev) => prev.filter((l) => l.deviceId !== deviceId));
   };

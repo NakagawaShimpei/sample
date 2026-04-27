@@ -1,5 +1,5 @@
-import { roomRepository } from '../repositories/RoomRepository';
 import { reservationRepository } from '../repositories/ReservationRepository';
+import { roomRepository } from '../repositories/RoomRepository';
 import { Room } from '../types';
 
 const roomService = {

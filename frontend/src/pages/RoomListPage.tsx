@@ -1,7 +1,6 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
-import { useData } from '../contexts/DataContext';
 import { useAuth } from '../contexts/AuthContext';
+import { useData } from '../contexts/DataContext';
 
 export default function RoomListPage() {
   const { rooms, deleteRoom, reservations } = useData();
@@ -13,7 +12,8 @@ export default function RoomListPage() {
     reservations.some((r) => r.roomId === roomId && r.date === today);
 
   const handleDelete = async (id: string, name: string) => {
-    if (!window.confirm(`会議室「${name}」を削除します。よろしいですか？`)) return;
+    if (!window.confirm(`会議室「${name}」を削除します。よろしいですか？`))
+      return;
     try {
       await deleteRoom(id);
     } catch (e) {

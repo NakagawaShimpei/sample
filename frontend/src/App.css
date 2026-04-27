@@ -1,5 +1,5 @@
 body {
-  font-family: "MS Gothic", "Osaka", Arial, sans-serif;
+  font-family: 'MS Gothic', 'Osaka', Arial, sans-serif;
   background: #e8e8e8;
   color: #000;
   margin: 0;
@@ -125,10 +125,10 @@ h2 {
   white-space: nowrap;
 }
 
-.form-table input[type="text"],
-.form-table input[type="number"],
-.form-table input[type="date"],
-.form-table input[type="time"],
+.form-table input[type='text'],
+.form-table input[type='number'],
+.form-table input[type='date'],
+.form-table input[type='time'],
 .form-table select,
 .form-table textarea {
   font-family: inherit;
@@ -153,7 +153,7 @@ h2 {
   margin-top: 12px;
 }
 
-.form-actions input[type="submit"] {
+.form-actions input[type='submit'] {
   padding: 4px 16px;
   font-size: 13px;
   background: #d0d0d0;
@@ -232,7 +232,7 @@ h2 {
   margin-top: 8px;
 }
 
-.login-submit input[type="submit"] {
+.login-submit input[type='submit'] {
   padding: 4px 24px;
   background: #d0d0d0;
   border: 1px outset #aaa;

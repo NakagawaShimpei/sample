@@ -1,21 +1,20 @@
-import React from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider } from './contexts/AuthContext';
-import { DataProvider } from './contexts/DataContext';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import './App.css';
 import Layout from './components/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
-import LoginPage from './pages/LoginPage';
-import RoomListPage from './pages/RoomListPage';
-import RoomReservePage from './pages/RoomReservePage';
-import ReservationListPage from './pages/ReservationListPage';
-import RoomRegisterPage from './pages/RoomRegisterPage';
+import { AuthProvider } from './contexts/AuthContext';
+import { DataProvider } from './contexts/DataContext';
 import DeviceListPage from './pages/DeviceListPage';
-import LoanListPage from './pages/LoanListPage';
 import DeviceRegisterPage from './pages/DeviceRegisterPage';
+import LoanListPage from './pages/LoanListPage';
+import LoginPage from './pages/LoginPage';
+import MfaSetupPage from './pages/MfaSetupPage';
+import ReservationListPage from './pages/ReservationListPage';
+import RoomListPage from './pages/RoomListPage';
+import RoomRegisterPage from './pages/RoomRegisterPage';
+import RoomReservePage from './pages/RoomReservePage';
 import UserListPage from './pages/UserListPage';
 import UserRegisterPage from './pages/UserRegisterPage';
-import MfaSetupPage from './pages/MfaSetupPage';
-import './App.css';
 
 function App() {
   return (
@@ -33,7 +32,10 @@ function App() {
             >
               <Route path="/" element={<Navigate to="/rooms" replace />} />
               <Route path="/rooms" element={<RoomListPage />} />
-              <Route path="/rooms/:roomId/reserve" element={<RoomReservePage />} />
+              <Route
+                path="/rooms/:roomId/reserve"
+                element={<RoomReservePage />}
+              />
               <Route path="/reservations" element={<ReservationListPage />} />
               <Route
                 path="/rooms/register"

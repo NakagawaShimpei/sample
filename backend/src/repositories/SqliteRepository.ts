@@ -6,12 +6,19 @@ function generateId(prefix: string): string {
 }
 
 export class SqliteRepository<T extends { id: string }> {
-  constructor(private readonly tableName: string, private readonly prefix: string) {
-    getDb().exec(`CREATE TABLE IF NOT EXISTS "${tableName}" (id TEXT PRIMARY KEY, data TEXT NOT NULL)`);
+  constructor(
+    private readonly tableName: string,
+    private readonly prefix: string,
+  ) {
+    getDb().exec(
+      `CREATE TABLE IF NOT EXISTS "${tableName}" (id TEXT PRIMARY KEY, data TEXT NOT NULL)`,
+    );
   }
 
   findAll(): T[] {
-    const rows = getDb().prepare(`SELECT data FROM "${this.tableName}"`).all() as { data: string }[];
+    const rows = getDb()
+      .prepare(`SELECT data FROM "${this.tableName}"`)
+      .all() as { data: string }[];
     return rows.map((r) => JSON.parse(r.data) as T);
   }
 
@@ -58,7 +65,9 @@ export class SqliteRepository<T extends { id: string }> {
 
   deleteWhere(predicate: (item: T) => boolean): Promise<void> {
     const items = this.findWhere(predicate);
-    const stmt = getDb().prepare(`DELETE FROM "${this.tableName}" WHERE id = ?`);
+    const stmt = getDb().prepare(
+      `DELETE FROM "${this.tableName}" WHERE id = ?`,
+    );
     const deleteMany = getDb().transaction(() => {
       for (const item of items) {
         stmt.run(item.id);

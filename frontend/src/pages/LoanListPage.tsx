@@ -1,4 +1,3 @@
-import React from 'react';
 import { useData } from '../contexts/DataContext';
 
 export default function LoanListPage() {

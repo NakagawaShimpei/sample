@@ -1,6 +1,11 @@
 export type Role = 'user' | 'admin';
 export type DeviceStatus = 'available' | 'inUse' | 'maintenance';
-export type DeviceType = 'ノートPC' | 'プロジェクター' | 'Web会議機器' | 'モニター' | 'その他';
+export type DeviceType =
+  | 'ノートPC'
+  | 'プロジェクター'
+  | 'Web会議機器'
+  | 'モニター'
+  | 'その他';
 
 export interface UserRecord {
   id: string;
@@ -8,7 +13,7 @@ export interface UserRecord {
   password: string;
   displayName: string;
   role: Role;
-  totpSecret?: string;   // MFA設定済みの場合のみ存在
+  totpSecret?: string; // MFA設定済みの場合のみ存在
 }
 
 export interface Room {

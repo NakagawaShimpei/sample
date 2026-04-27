@@ -38,20 +38,53 @@ export default function RoomRegisterPage() {
         <table className="form-table">
           <tbody>
             <tr>
-              <th>会議室名 <span className="req">*</span></th>
-              <td><input type="text" value={name} onChange={(e) => setName(e.target.value)} /></td>
+              <th>
+                会議室名 <span className="req">*</span>
+              </th>
+              <td>
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                />
+              </td>
             </tr>
             <tr>
-              <th>場所 <span className="req">*</span></th>
-              <td><input type="text" value={location} onChange={(e) => setLocation(e.target.value)} /></td>
+              <th>
+                場所 <span className="req">*</span>
+              </th>
+              <td>
+                <input
+                  type="text"
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value)}
+                />
+              </td>
             </tr>
             <tr>
-              <th>キャパ <span className="req">*</span></th>
-              <td><input type="number" min="1" value={capacity} onChange={(e) => setCapacity(e.target.value)} /></td>
+              <th>
+                キャパ <span className="req">*</span>
+              </th>
+              <td>
+                <input
+                  type="number"
+                  min="1"
+                  value={capacity}
+                  onChange={(e) => setCapacity(e.target.value)}
+                />
+              </td>
             </tr>
             <tr>
-              <th>設備 <span className="req">*</span></th>
-              <td><input type="text" value={equipment} onChange={(e) => setEquipment(e.target.value)} /></td>
+              <th>
+                設備 <span className="req">*</span>
+              </th>
+              <td>
+                <input
+                  type="text"
+                  value={equipment}
+                  onChange={(e) => setEquipment(e.target.value)}
+                />
+              </td>
             </tr>
           </tbody>
         </table>

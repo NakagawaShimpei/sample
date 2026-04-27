@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate, Navigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
 export default function LoginPage() {
@@ -56,7 +56,9 @@ export default function LoginPage() {
             <table className="login-table">
               <tbody>
                 <tr>
-                  <td><label htmlFor="totpCode">認証コード:</label></td>
+                  <td>
+                    <label htmlFor="totpCode">認証コード:</label>
+                  </td>
                   <td>
                     <input
                       id="totpCode"
@@ -65,7 +67,9 @@ export default function LoginPage() {
                       pattern="\d{6}"
                       maxLength={6}
                       value={totpCode}
-                      onChange={(e) => setTotpCode(e.target.value.replace(/\D/g, ''))}
+                      onChange={(e) =>
+                        setTotpCode(e.target.value.replace(/\D/g, ''))
+                      }
                       autoFocus
                       autoComplete="one-time-code"
                     />
@@ -81,8 +85,18 @@ export default function LoginPage() {
           <div style={{ textAlign: 'center', marginTop: '0.5rem' }}>
             <button
               type="button"
-              style={{ background: 'none', border: 'none', color: '#0066cc', cursor: 'pointer', fontSize: '0.9rem' }}
-              onClick={() => { setStep('password'); setError(''); setTotpCode(''); }}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: '#0066cc',
+                cursor: 'pointer',
+                fontSize: '0.9rem',
+              }}
+              onClick={() => {
+                setStep('password');
+                setError('');
+                setTotpCode('');
+              }}
             >
               ← パスワード入力に戻る
             </button>
@@ -101,7 +115,9 @@ export default function LoginPage() {
           <table className="login-table">
             <tbody>
               <tr>
-                <td><label htmlFor="username">ユーザー名:</label></td>
+                <td>
+                  <label htmlFor="username">ユーザー名:</label>
+                </td>
                 <td>
                   <input
                     id="username"
@@ -112,7 +128,9 @@ export default function LoginPage() {
                 </td>
               </tr>
               <tr>
-                <td><label htmlFor="password">パスワード:</label></td>
+                <td>
+                  <label htmlFor="password">パスワード:</label>
+                </td>
                 <td>
                   <input
                     id="password"

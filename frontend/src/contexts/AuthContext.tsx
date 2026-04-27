@@ -1,4 +1,12 @@
-import React, { createContext, useContext, useState, useEffect, useRef, useCallback, ReactNode } from 'react';
+import {
+  createContext,
+  ReactNode,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { User } from '../types';
 
 // 無操作タイムアウト: 30分（サーバー側 INACTIVITY_TIMEOUT_MS と合わせること）
@@ -45,7 +53,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return;
     }
     const events = ['mousemove', 'keydown', 'click', 'scroll', 'touchstart'];
-    events.forEach((e) => window.addEventListener(e, resetTimer, { passive: true }));
+    events.forEach((e) =>
+      window.addEventListener(e, resetTimer, { passive: true }),
+    );
     resetTimer();
     return () => {
       events.forEach((e) => window.removeEventListener(e, resetTimer));
@@ -62,7 +72,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       .finally(() => setIsLoading(false));
   }, []);
 
-  const login = async (username: string, password: string): Promise<LoginResult> => {
+  const login = async (
+    username: string,
+    password: string,
+  ): Promise<LoginResult> => {
     try {
       const res = await fetch('/api/auth/login', {
         method: 'POST',
@@ -82,7 +95,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const mfaVerify = async (mfaToken: string, code: string): Promise<boolean> => {
+  const mfaVerify = async (
+    mfaToken: string,
+    code: string,
+  ): Promise<boolean> => {
     try {
       const res = await fetch('/api/mfa/verify', {
         method: 'POST',
@@ -100,7 +116,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ currentUser, isLoading, login, mfaVerify, logout }}>
+    <AuthContext.Provider
+      value={{ currentUser, isLoading, login, mfaVerify, logout }}
+    >
       {children}
     </AuthContext.Provider>
   );
