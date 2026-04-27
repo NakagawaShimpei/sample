@@ -11,6 +11,7 @@ import { User } from '../types';
 
 // 無操作タイムアウト: 30分（サーバー側 INACTIVITY_TIMEOUT_MS と合わせること）
 const INACTIVITY_MS = 30 * 60 * 1000;
+// const INACTIVITY_MS = 5 * 1000; // テスト用 (5秒)
 
 export interface LoginResult {
   ok: boolean;
