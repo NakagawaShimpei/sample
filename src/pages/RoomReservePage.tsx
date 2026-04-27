@@ -5,7 +5,7 @@ import { useAuth } from '../contexts/AuthContext';
 
 export default function RoomReservePage() {
   const { roomId } = useParams<{ roomId: string }>();
-  const { rooms, addReservation } = useData();
+  const { rooms, reservations, addReservation } = useData();
   const { currentUser } = useAuth();
   const navigate = useNavigate();
 
@@ -32,6 +32,21 @@ export default function RoomReservePage() {
     e.preventDefault();
     if (!date || !startTime || !endTime || !attendeeCount || !meetingName || !reservedBy || !participants) {
       alert('すべての項目を入力してください。');
+      return;
+    }
+    if (startTime >= endTime) {
+      alert('終了時刻は開始時刻より後にしてください。');
+      return;
+    }
+    const hasConflict = reservations.some(
+      (r) =>
+        r.roomId === room.id &&
+        r.date === date &&
+        r.startTime < endTime &&
+        r.endTime > startTime
+    );
+    if (hasConflict) {
+      alert('この会議室はすでに指定の時間帯に予約が入っています。別の日時を選択してください。');
       return;
     }
     try {
