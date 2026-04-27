@@ -1,0 +1,1417 @@
+{
+  "reservationHistory": [
+    {
+      "id": "rh001",
+      "roomId": "r001",
+      "date": "2026-04-18",
+      "startTime": "09:00",
+      "endTime": "10:00",
+      "attendeeCount": 4,
+      "meetingName": "1on1",
+      "reservedBy": "suzuki",
+      "status": "completed"
+    },
+    {
+      "id": "rh002",
+      "roomId": "r001",
+      "date": "2026-04-15",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "attendeeCount": 2,
+      "meetingName": "企画会議",
+      "reservedBy": "admin",
+      "status": "completed"
+    },
+    {
+      "id": "rh003",
+      "roomId": "r001",
+      "date": "2026-04-12",
+      "startTime": "10:00",
+      "endTime": "12:00",
+      "attendeeCount": 3,
+      "meetingName": "レビュー",
+      "reservedBy": "nakagawa",
+      "status": "completed"
+    },
+    {
+      "id": "rh004",
+      "roomId": "r001",
+      "date": "2026-04-09",
+      "startTime": "11:00",
+      "endTime": "12:00",
+      "attendeeCount": 6,
+      "meetingName": "ブレスト",
+      "reservedBy": "user",
+      "status": "completed"
+    },
+    {
+      "id": "rh005",
+      "roomId": "r001",
+      "date": "2026-04-06",
+      "startTime": "13:00",
+      "endTime": "14:00",
+      "attendeeCount": 4,
+      "meetingName": "全体会議",
+      "reservedBy": "sato",
+      "status": "completed"
+    },
+    {
+      "id": "rh006",
+      "roomId": "r001",
+      "date": "2026-04-03",
+      "startTime": "14:00",
+      "endTime": "15:00",
+      "attendeeCount": 2,
+      "meetingName": "採用面接",
+      "reservedBy": "suzuki",
+      "status": "cancelled"
+    },
+    {
+      "id": "rh007",
+      "roomId": "r001",
+      "date": "2026-03-31",
+      "startTime": "14:00",
+      "endTime": "16:00",
+      "attendeeCount": 6,
+      "meetingName": "週次定例",
+      "reservedBy": "admin",
+      "status": "completed"
+    },
+    {
+      "id": "rh008",
+      "roomId": "r001",
+      "date": "2026-03-28",
+      "startTime": "15:00",
+      "endTime": "16:00",
+      "attendeeCount": 6,
+      "meetingName": "プロジェクトMTG",
+      "reservedBy": "nakagawa",
+      "status": "cancelled"
+    },
+    {
+      "id": "rh009",
+      "roomId": "r001",
+      "date": "2026-03-25",
+      "startTime": "16:00",
+      "endTime": "17:00",
+      "attendeeCount": 2,
+      "meetingName": "1on1",
+      "reservedBy": "user",
+      "status": "completed"
+    },
+    {
+      "id": "rh010",
+      "roomId": "r001",
+      "date": "2026-03-22",
+      "startTime": "09:00",
+      "endTime": "10:00",
+      "attendeeCount": 3,
+      "meetingName": "企画会議",
+      "reservedBy": "sato",
+      "status": "completed"
+    },
+    {
+      "id": "rh011",
+      "roomId": "r001",
+      "date": "2026-03-19",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "attendeeCount": 7,
+      "meetingName": "レビュー",
+      "reservedBy": "suzuki",
+      "status": "completed"
+    },
+    {
+      "id": "rh012",
+      "roomId": "r001",
+      "date": "2026-03-16",
+      "startTime": "10:00",
+      "endTime": "12:00",
+      "attendeeCount": 3,
+      "meetingName": "ブレスト",
+      "reservedBy": "admin",
+      "status": "cancelled"
+    },
+    {
+      "id": "rh013",
+      "roomId": "r004",
+      "date": "2026-03-13",
+      "startTime": "09:00",
+      "endTime": "10:00",
+      "attendeeCount": 8,
+      "meetingName": "全体会議",
+      "reservedBy": "nakagawa",
+      "status": "completed"
+    },
+    {
+      "id": "rh014",
+      "roomId": "r004",
+      "date": "2026-03-10",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "attendeeCount": 9,
+      "meetingName": "採用面接",
+      "reservedBy": "user",
+      "status": "completed"
+    },
+    {
+      "id": "rh015",
+      "roomId": "r004",
+      "date": "2026-03-07",
+      "startTime": "10:00",
+      "endTime": "12:00",
+      "attendeeCount": 9,
+      "meetingName": "週次定例",
+      "reservedBy": "sato",
+      "status": "completed"
+    },
+    {
+      "id": "rh016",
+      "roomId": "r004",
+      "date": "2026-03-04",
+      "startTime": "11:00",
+      "endTime": "12:00",
+      "attendeeCount": 6,
+      "meetingName": "プロジェクトMTG",
+      "reservedBy": "suzuki",
+      "status": "completed"
+    },
+    {
+      "id": "rh017",
+      "roomId": "r004",
+      "date": "2026-03-01",
+      "startTime": "13:00",
+      "endTime": "14:00",
+      "attendeeCount": 4,
+      "meetingName": "1on1",
+      "reservedBy": "admin",
+      "status": "completed"
+    },
+    {
+      "id": "rh018",
+      "roomId": "r004",
+      "date": "2026-02-26",
+      "startTime": "14:00",
+      "endTime": "15:00",
+      "attendeeCount": 7,
+      "meetingName": "企画会議",
+      "reservedBy": "nakagawa",
+      "status": "completed"
+    },
+    {
+      "id": "rh019",
+      "roomId": "r004",
+      "date": "2026-02-23",
+      "startTime": "14:00",
+      "endTime": "16:00",
+      "attendeeCount": 6,
+      "meetingName": "レビュー",
+      "reservedBy": "user",
+      "status": "cancelled"
+    },
+    {
+      "id": "rh020",
+      "roomId": "r004",
+      "date": "2026-02-20",
+      "startTime": "15:00",
+      "endTime": "16:00",
+      "attendeeCount": 7,
+      "meetingName": "ブレスト",
+      "reservedBy": "sato",
+      "status": "completed"
+    },
+    {
+      "id": "rh021",
+      "roomId": "r004",
+      "date": "2026-02-17",
+      "startTime": "16:00",
+      "endTime": "17:00",
+      "attendeeCount": 2,
+      "meetingName": "全体会議",
+      "reservedBy": "suzuki",
+      "status": "cancelled"
+    },
+    {
+      "id": "rh022",
+      "roomId": "r004",
+      "date": "2026-02-14",
+      "startTime": "09:00",
+      "endTime": "10:00",
+      "attendeeCount": 9,
+      "meetingName": "採用面接",
+      "reservedBy": "admin",
+      "status": "completed"
+    },
+    {
+      "id": "rh023",
+      "roomId": "r007",
+      "date": "2026-02-11",
+      "startTime": "09:00",
+      "endTime": "10:00",
+      "attendeeCount": 2,
+      "meetingName": "週次定例",
+      "reservedBy": "nakagawa",
+      "status": "completed"
+    },
+    {
+      "id": "rh024",
+      "roomId": "r007",
+      "date": "2026-02-08",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "attendeeCount": 4,
+      "meetingName": "プロジェクトMTG",
+      "reservedBy": "user",
+      "status": "completed"
+    },
+    {
+      "id": "rh025",
+      "roomId": "r007",
+      "date": "2026-02-05",
+      "startTime": "10:00",
+      "endTime": "12:00",
+      "attendeeCount": 6,
+      "meetingName": "1on1",
+      "reservedBy": "sato",
+      "status": "completed"
+    },
+    {
+      "id": "rh026",
+      "roomId": "r007",
+      "date": "2026-02-02",
+      "startTime": "11:00",
+      "endTime": "12:00",
+      "attendeeCount": 9,
+      "meetingName": "企画会議",
+      "reservedBy": "suzuki",
+      "status": "cancelled"
+    },
+    {
+      "id": "rh027",
+      "roomId": "r007",
+      "date": "2026-01-30",
+      "startTime": "13:00",
+      "endTime": "14:00",
+      "attendeeCount": 8,
+      "meetingName": "レビュー",
+      "reservedBy": "admin",
+      "status": "completed"
+    },
+    {
+      "id": "rh028",
+      "roomId": "r007",
+      "date": "2026-04-17",
+      "startTime": "14:00",
+      "endTime": "15:00",
+      "attendeeCount": 9,
+      "meetingName": "ブレスト",
+      "reservedBy": "nakagawa",
+      "status": "completed"
+    },
+    {
+      "id": "rh029",
+      "roomId": "r007",
+      "date": "2026-04-14",
+      "startTime": "14:00",
+      "endTime": "16:00",
+      "attendeeCount": 6,
+      "meetingName": "全体会議",
+      "reservedBy": "user",
+      "status": "completed"
+    },
+    {
+      "id": "rh030",
+      "roomId": "r007",
+      "date": "2026-04-11",
+      "startTime": "15:00",
+      "endTime": "16:00",
+      "attendeeCount": 8,
+      "meetingName": "採用面接",
+      "reservedBy": "sato",
+      "status": "completed"
+    },
+    {
+      "id": "rh031",
+      "roomId": "r002",
+      "date": "2026-04-08",
+      "startTime": "09:00",
+      "endTime": "10:00",
+      "attendeeCount": 6,
+      "meetingName": "週次定例",
+      "reservedBy": "suzuki",
+      "status": "completed"
+    },
+    {
+      "id": "rh032",
+      "roomId": "r002",
+      "date": "2026-04-05",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "attendeeCount": 7,
+      "meetingName": "プロジェクトMTG",
+      "reservedBy": "admin",
+      "status": "completed"
+    },
+    {
+      "id": "rh033",
+      "roomId": "r002",
+      "date": "2026-04-02",
+      "startTime": "10:00",
+      "endTime": "12:00",
+      "attendeeCount": 5,
+      "meetingName": "1on1",
+      "reservedBy": "nakagawa",
+      "status": "completed"
+    },
+    {
+      "id": "rh034",
+      "roomId": "r002",
+      "date": "2026-03-30",
+      "startTime": "11:00",
+      "endTime": "12:00",
+      "attendeeCount": 9,
+      "meetingName": "企画会議",
+      "reservedBy": "user",
+      "status": "completed"
+    },
+    {
+      "id": "rh035",
+      "roomId": "r002",
+      "date": "2026-03-27",
+      "startTime": "13:00",
+      "endTime": "14:00",
+      "attendeeCount": 6,
+      "meetingName": "レビュー",
+      "reservedBy": "sato",
+      "status": "completed"
+    },
+    {
+      "id": "rh036",
+      "roomId": "r002",
+      "date": "2026-03-24",
+      "startTime": "14:00",
+      "endTime": "15:00",
+      "attendeeCount": 7,
+      "meetingName": "ブレスト",
+      "reservedBy": "suzuki",
+      "status": "completed"
+    },
+    {
+      "id": "rh037",
+      "roomId": "r002",
+      "date": "2026-03-21",
+      "startTime": "14:00",
+      "endTime": "16:00",
+      "attendeeCount": 7,
+      "meetingName": "全体会議",
+      "reservedBy": "admin",
+      "status": "completed"
+    },
+    {
+      "id": "rh038",
+      "roomId": "r005",
+      "date": "2026-03-18",
+      "startTime": "09:00",
+      "endTime": "10:00",
+      "attendeeCount": 4,
+      "meetingName": "採用面接",
+      "reservedBy": "nakagawa",
+      "status": "cancelled"
+    },
+    {
+      "id": "rh039",
+      "roomId": "r005",
+      "date": "2026-03-15",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "attendeeCount": 2,
+      "meetingName": "週次定例",
+      "reservedBy": "user",
+      "status": "cancelled"
+    },
+    {
+      "id": "rh040",
+      "roomId": "r005",
+      "date": "2026-03-12",
+      "startTime": "10:00",
+      "endTime": "12:00",
+      "attendeeCount": 9,
+      "meetingName": "プロジェクトMTG",
+      "reservedBy": "sato",
+      "status": "completed"
+    },
+    {
+      "id": "rh041",
+      "roomId": "r005",
+      "date": "2026-03-09",
+      "startTime": "11:00",
+      "endTime": "12:00",
+      "attendeeCount": 5,
+      "meetingName": "1on1",
+      "reservedBy": "suzuki",
+      "status": "completed"
+    },
+    {
+      "id": "rh042",
+      "roomId": "r005",
+      "date": "2026-03-06",
+      "startTime": "13:00",
+      "endTime": "14:00",
+      "attendeeCount": 4,
+      "meetingName": "企画会議",
+      "reservedBy": "admin",
+      "status": "cancelled"
+    },
+    {
+      "id": "rh043",
+      "roomId": "r003",
+      "date": "2026-03-03",
+      "startTime": "09:00",
+      "endTime": "10:00",
+      "attendeeCount": 2,
+      "meetingName": "レビュー",
+      "reservedBy": "nakagawa",
+      "status": "completed"
+    },
+    {
+      "id": "rh044",
+      "roomId": "r003",
+      "date": "2026-02-28",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "attendeeCount": 3,
+      "meetingName": "ブレスト",
+      "reservedBy": "user",
+      "status": "cancelled"
+    },
+    {
+      "id": "rh045",
+      "roomId": "r003",
+      "date": "2026-02-25",
+      "startTime": "10:00",
+      "endTime": "12:00",
+      "attendeeCount": 3,
+      "meetingName": "全体会議",
+      "reservedBy": "sato",
+      "status": "completed"
+    },
+    {
+      "id": "rh046",
+      "roomId": "r003",
+      "date": "2026-02-22",
+      "startTime": "11:00",
+      "endTime": "12:00",
+      "attendeeCount": 2,
+      "meetingName": "採用面接",
+      "reservedBy": "suzuki",
+      "status": "cancelled"
+    },
+    {
+      "id": "rh047",
+      "roomId": "r006",
+      "date": "2026-02-19",
+      "startTime": "09:00",
+      "endTime": "10:00",
+      "attendeeCount": 6,
+      "meetingName": "週次定例",
+      "reservedBy": "admin",
+      "status": "completed"
+    },
+    {
+      "id": "rh048",
+      "roomId": "r006",
+      "date": "2026-02-16",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "attendeeCount": 4,
+      "meetingName": "プロジェクトMTG",
+      "reservedBy": "nakagawa",
+      "status": "cancelled"
+    },
+    {
+      "id": "rh049",
+      "roomId": "r006",
+      "date": "2026-02-13",
+      "startTime": "10:00",
+      "endTime": "12:00",
+      "attendeeCount": 7,
+      "meetingName": "1on1",
+      "reservedBy": "user",
+      "status": "completed"
+    },
+    {
+      "id": "rh050",
+      "roomId": "r008",
+      "date": "2026-02-10",
+      "startTime": "09:00",
+      "endTime": "10:00",
+      "attendeeCount": 5,
+      "meetingName": "企画会議",
+      "reservedBy": "sato",
+      "status": "cancelled"
+    },
+    {
+      "id": "rh051",
+      "roomId": "r008",
+      "date": "2026-02-07",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "attendeeCount": 6,
+      "meetingName": "レビュー",
+      "reservedBy": "suzuki",
+      "status": "completed"
+    },
+    {
+      "id": "rh052",
+      "roomId": "r008",
+      "date": "2026-02-04",
+      "startTime": "10:00",
+      "endTime": "12:00",
+      "attendeeCount": 6,
+      "meetingName": "ブレスト",
+      "reservedBy": "admin",
+      "status": "completed"
+    },
+    {
+      "id": "rh053",
+      "roomId": "r032",
+      "date": "2026-02-01",
+      "startTime": "09:00",
+      "endTime": "10:00",
+      "attendeeCount": 6,
+      "meetingName": "全体会議",
+      "reservedBy": "nakagawa",
+      "status": "cancelled"
+    },
+    {
+      "id": "rh054",
+      "roomId": "r032",
+      "date": "2026-04-19",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "attendeeCount": 8,
+      "meetingName": "採用面接",
+      "reservedBy": "user",
+      "status": "completed"
+    },
+    {
+      "id": "rh055",
+      "roomId": "r028",
+      "date": "2026-04-16",
+      "startTime": "09:00",
+      "endTime": "10:00",
+      "attendeeCount": 8,
+      "meetingName": "週次定例",
+      "reservedBy": "sato",
+      "status": "completed"
+    },
+    {
+      "id": "rh056",
+      "roomId": "r028",
+      "date": "2026-04-13",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "attendeeCount": 4,
+      "meetingName": "プロジェクトMTG",
+      "reservedBy": "suzuki",
+      "status": "completed"
+    },
+    {
+      "id": "rh057",
+      "roomId": "r013",
+      "date": "2026-04-10",
+      "startTime": "09:00",
+      "endTime": "10:00",
+      "attendeeCount": 7,
+      "meetingName": "1on1",
+      "reservedBy": "admin",
+      "status": "cancelled"
+    },
+    {
+      "id": "rh058",
+      "roomId": "r009",
+      "date": "2026-04-07",
+      "startTime": "09:00",
+      "endTime": "10:00",
+      "attendeeCount": 4,
+      "meetingName": "企画会議",
+      "reservedBy": "nakagawa",
+      "status": "completed"
+    },
+    {
+      "id": "rh059",
+      "roomId": "r010",
+      "date": "2026-04-04",
+      "startTime": "09:00",
+      "endTime": "10:00",
+      "attendeeCount": 3,
+      "meetingName": "レビュー",
+      "reservedBy": "user",
+      "status": "cancelled"
+    },
+    {
+      "id": "rh060",
+      "roomId": "r004",
+      "date": "2026-04-14",
+      "startTime": "14:00",
+      "endTime": "15:00",
+      "attendeeCount": 2,
+      "meetingName": "1on1",
+      "reservedBy": "user",
+      "status": "completed"
+    },
+    {
+      "id": "rh061",
+      "roomId": "r004",
+      "date": "2026-04-07",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "attendeeCount": 1,
+      "meetingName": "1on1",
+      "reservedBy": "sato",
+      "status": "completed"
+    },
+    {
+      "id": "rh062",
+      "roomId": "r004",
+      "date": "2026-03-31",
+      "startTime": "13:00",
+      "endTime": "14:00",
+      "attendeeCount": 3,
+      "meetingName": "1on1",
+      "reservedBy": "suzuki",
+      "status": "completed"
+    },
+    {
+      "id": "rh063",
+      "roomId": "r004",
+      "date": "2026-03-24",
+      "startTime": "14:00",
+      "endTime": "16:00",
+      "attendeeCount": 2,
+      "meetingName": "1on1",
+      "reservedBy": "user",
+      "status": "completed"
+    },
+    {
+      "id": "rh064",
+      "roomId": "r004",
+      "date": "2026-03-17",
+      "startTime": "10:00",
+      "endTime": "12:00",
+      "attendeeCount": 1,
+      "meetingName": "1on1",
+      "reservedBy": "sato",
+      "status": "completed"
+    },
+    {
+      "id": "rh065",
+      "roomId": "r004",
+      "date": "2026-03-10",
+      "startTime": "15:00",
+      "endTime": "16:00",
+      "attendeeCount": 2,
+      "meetingName": "1on1",
+      "reservedBy": "suzuki",
+      "status": "completed"
+    },
+    {
+      "id": "rh066",
+      "roomId": "r004",
+      "date": "2026-03-03",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "attendeeCount": 3,
+      "meetingName": "1on1",
+      "reservedBy": "user",
+      "status": "completed"
+    },
+    {
+      "id": "rh067",
+      "roomId": "r004",
+      "date": "2026-02-24",
+      "startTime": "13:00",
+      "endTime": "14:00",
+      "attendeeCount": 1,
+      "meetingName": "1on1",
+      "reservedBy": "sato",
+      "status": "completed"
+    },
+    {
+      "id": "rh068",
+      "roomId": "r007",
+      "date": "2026-04-15",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "attendeeCount": 4,
+      "meetingName": "週次定例",
+      "reservedBy": "sato",
+      "status": "completed"
+    },
+    {
+      "id": "rh069",
+      "roomId": "r007",
+      "date": "2026-04-08",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "attendeeCount": 4,
+      "meetingName": "週次定例",
+      "reservedBy": "sato",
+      "status": "completed"
+    },
+    {
+      "id": "rh070",
+      "roomId": "r007",
+      "date": "2026-04-01",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "attendeeCount": 4,
+      "meetingName": "週次定例",
+      "reservedBy": "sato",
+      "status": "completed"
+    },
+    {
+      "id": "rh071",
+      "roomId": "r007",
+      "date": "2026-03-25",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "attendeeCount": 4,
+      "meetingName": "週次定例",
+      "reservedBy": "sato",
+      "status": "completed"
+    },
+    {
+      "id": "rh072",
+      "roomId": "r007",
+      "date": "2026-03-18",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "attendeeCount": 4,
+      "meetingName": "週次定例",
+      "reservedBy": "sato",
+      "status": "completed"
+    },
+    {
+      "id": "rh073",
+      "roomId": "r007",
+      "date": "2026-03-11",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "attendeeCount": 4,
+      "meetingName": "週次定例",
+      "reservedBy": "sato",
+      "status": "completed"
+    },
+    {
+      "id": "rh074",
+      "roomId": "r007",
+      "date": "2026-03-04",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "attendeeCount": 4,
+      "meetingName": "週次定例",
+      "reservedBy": "sato",
+      "status": "completed"
+    },
+    {
+      "id": "rh075",
+      "roomId": "r007",
+      "date": "2026-02-25",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "attendeeCount": 4,
+      "meetingName": "週次定例",
+      "reservedBy": "sato",
+      "status": "completed"
+    },
+    {
+      "id": "rh076",
+      "roomId": "r003",
+      "date": "2026-04-16",
+      "startTime": "13:00",
+      "endTime": "14:00",
+      "attendeeCount": 3,
+      "meetingName": "週次定例",
+      "reservedBy": "user",
+      "status": "cancelled"
+    },
+    {
+      "id": "rh077",
+      "roomId": "r003",
+      "date": "2026-04-11",
+      "startTime": "13:00",
+      "endTime": "14:00",
+      "attendeeCount": 3,
+      "meetingName": "1on1",
+      "reservedBy": "sato",
+      "status": "cancelled"
+    },
+    {
+      "id": "rh078",
+      "roomId": "r003",
+      "date": "2026-04-04",
+      "startTime": "13:00",
+      "endTime": "14:00",
+      "attendeeCount": 3,
+      "meetingName": "プロジェクトMTG",
+      "reservedBy": "suzuki",
+      "status": "completed"
+    },
+    {
+      "id": "rh079",
+      "roomId": "r003",
+      "date": "2026-03-28",
+      "startTime": "13:00",
+      "endTime": "14:00",
+      "attendeeCount": 3,
+      "meetingName": "企画会議",
+      "reservedBy": "nakagawa",
+      "status": "cancelled"
+    },
+    {
+      "id": "rh080",
+      "roomId": "r003",
+      "date": "2026-03-21",
+      "startTime": "13:00",
+      "endTime": "14:00",
+      "attendeeCount": 3,
+      "meetingName": "採用面接",
+      "reservedBy": "user",
+      "status": "cancelled"
+    },
+    {
+      "id": "rh081",
+      "roomId": "r003",
+      "date": "2026-03-14",
+      "startTime": "13:00",
+      "endTime": "14:00",
+      "attendeeCount": 3,
+      "meetingName": "レビュー",
+      "reservedBy": "sato",
+      "status": "cancelled"
+    },
+    {
+      "id": "rh082",
+      "roomId": "r003",
+      "date": "2026-03-07",
+      "startTime": "13:00",
+      "endTime": "14:00",
+      "attendeeCount": 3,
+      "meetingName": "ブレスト",
+      "reservedBy": "suzuki",
+      "status": "completed"
+    },
+    {
+      "id": "rh083",
+      "roomId": "r003",
+      "date": "2026-02-28",
+      "startTime": "13:00",
+      "endTime": "14:00",
+      "attendeeCount": 3,
+      "meetingName": "報告会",
+      "reservedBy": "nakagawa",
+      "status": "cancelled"
+    },
+    {
+      "id": "rh084",
+      "roomId": "r001",
+      "date": "2026-04-15",
+      "startTime": "10:00",
+      "endTime": "12:00",
+      "attendeeCount": 8,
+      "meetingName": "週次定例",
+      "reservedBy": "user",
+      "status": "completed"
+    },
+    {
+      "id": "rh085",
+      "roomId": "r005",
+      "date": "2026-04-15",
+      "startTime": "14:00",
+      "endTime": "16:00",
+      "attendeeCount": 10,
+      "meetingName": "1on1",
+      "reservedBy": "sato",
+      "status": "completed"
+    },
+    {
+      "id": "rh086",
+      "roomId": "r001",
+      "date": "2026-04-08",
+      "startTime": "09:00",
+      "endTime": "11:00",
+      "attendeeCount": 6,
+      "meetingName": "プロジェクトMTG",
+      "reservedBy": "suzuki",
+      "status": "completed"
+    },
+    {
+      "id": "rh087",
+      "roomId": "r004",
+      "date": "2026-04-08",
+      "startTime": "13:00",
+      "endTime": "15:00",
+      "attendeeCount": 15,
+      "meetingName": "企画会議",
+      "reservedBy": "nakagawa",
+      "status": "completed"
+    },
+    {
+      "id": "rh088",
+      "roomId": "r002",
+      "date": "2026-04-08",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "attendeeCount": 4,
+      "meetingName": "採用面接",
+      "reservedBy": "admin",
+      "status": "completed"
+    },
+    {
+      "id": "rh089",
+      "roomId": "r001",
+      "date": "2026-04-01",
+      "startTime": "10:00",
+      "endTime": "12:00",
+      "attendeeCount": 7,
+      "meetingName": "レビュー",
+      "reservedBy": "user",
+      "status": "completed"
+    },
+    {
+      "id": "rh090",
+      "roomId": "r005",
+      "date": "2026-04-01",
+      "startTime": "14:00",
+      "endTime": "16:00",
+      "attendeeCount": 12,
+      "meetingName": "ブレスト",
+      "reservedBy": "sato",
+      "status": "completed"
+    },
+    {
+      "id": "rh091",
+      "roomId": "r001",
+      "date": "2026-03-25",
+      "startTime": "09:00",
+      "endTime": "10:00",
+      "attendeeCount": 5,
+      "meetingName": "報告会",
+      "reservedBy": "suzuki",
+      "status": "completed"
+    },
+    {
+      "id": "rh092",
+      "roomId": "r004",
+      "date": "2026-03-25",
+      "startTime": "10:00",
+      "endTime": "12:00",
+      "attendeeCount": 18,
+      "meetingName": "週次定例",
+      "reservedBy": "nakagawa",
+      "status": "completed"
+    },
+    {
+      "id": "rh093",
+      "roomId": "r002",
+      "date": "2026-03-25",
+      "startTime": "13:00",
+      "endTime": "14:00",
+      "attendeeCount": 3,
+      "meetingName": "1on1",
+      "reservedBy": "admin",
+      "status": "completed"
+    },
+    {
+      "id": "rh094",
+      "roomId": "r001",
+      "date": "2026-03-18",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "attendeeCount": 8,
+      "meetingName": "プロジェクトMTG",
+      "reservedBy": "user",
+      "status": "completed"
+    },
+    {
+      "id": "rh095",
+      "roomId": "r005",
+      "date": "2026-03-18",
+      "startTime": "14:00",
+      "endTime": "16:00",
+      "attendeeCount": 9,
+      "meetingName": "企画会議",
+      "reservedBy": "sato",
+      "status": "completed"
+    },
+    {
+      "id": "rh096",
+      "roomId": "r009",
+      "date": "2026-04-17",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "attendeeCount": 1,
+      "meetingName": "1on1",
+      "reservedBy": "user",
+      "status": "completed"
+    },
+    {
+      "id": "rh097",
+      "roomId": "r010",
+      "date": "2026-04-10",
+      "startTime": "14:00",
+      "endTime": "15:00",
+      "attendeeCount": 2,
+      "meetingName": "1on1",
+      "reservedBy": "sato",
+      "status": "completed"
+    }
+  ],
+  "loanHistory": [
+    {
+      "id": "lh001",
+      "deviceId": "d001",
+      "borrowedBy": "suzuki",
+      "borrowedAt": "2026-04-17T09:00:00.000Z",
+      "returnedAt": "2026-04-17T15:00:00.000Z",
+      "durationHours": 6
+    },
+    {
+      "id": "lh002",
+      "deviceId": "d001",
+      "borrowedBy": "admin",
+      "borrowedAt": "2026-04-12T09:00:00.000Z",
+      "returnedAt": "2026-04-12T14:00:00.000Z",
+      "durationHours": 5
+    },
+    {
+      "id": "lh003",
+      "deviceId": "d001",
+      "borrowedBy": "nakagawa",
+      "borrowedAt": "2026-04-07T09:00:00.000Z",
+      "returnedAt": "2026-04-07T17:00:00.000Z",
+      "durationHours": 8
+    },
+    {
+      "id": "lh004",
+      "deviceId": "d001",
+      "borrowedBy": "user",
+      "borrowedAt": "2026-04-02T09:00:00.000Z",
+      "returnedAt": "2026-04-02T16:00:00.000Z",
+      "durationHours": 7
+    },
+    {
+      "id": "lh005",
+      "deviceId": "d001",
+      "borrowedBy": "sato",
+      "borrowedAt": "2026-03-28T09:00:00.000Z",
+      "returnedAt": "2026-03-28T14:00:00.000Z",
+      "durationHours": 5
+    },
+    {
+      "id": "lh006",
+      "deviceId": "d002",
+      "borrowedBy": "suzuki",
+      "borrowedAt": "2026-03-23T09:00:00.000Z",
+      "returnedAt": "2026-03-23T17:00:00.000Z",
+      "durationHours": 8
+    },
+    {
+      "id": "lh007",
+      "deviceId": "d002",
+      "borrowedBy": "admin",
+      "borrowedAt": "2026-03-18T09:00:00.000Z",
+      "returnedAt": "2026-03-18T18:00:00.000Z",
+      "durationHours": 9
+    },
+    {
+      "id": "lh008",
+      "deviceId": "d002",
+      "borrowedBy": "nakagawa",
+      "borrowedAt": "2026-03-13T09:00:00.000Z",
+      "returnedAt": "2026-03-13T18:00:00.000Z",
+      "durationHours": 9
+    },
+    {
+      "id": "lh009",
+      "deviceId": "d002",
+      "borrowedBy": "user",
+      "borrowedAt": "2026-03-08T09:00:00.000Z",
+      "returnedAt": "2026-03-08T17:00:00.000Z",
+      "durationHours": 8
+    },
+    {
+      "id": "lh010",
+      "deviceId": "d003",
+      "borrowedBy": "sato",
+      "borrowedAt": "2026-03-03T09:00:00.000Z",
+      "returnedAt": "2026-03-03T14:00:00.000Z",
+      "durationHours": 5
+    },
+    {
+      "id": "lh011",
+      "deviceId": "d003",
+      "borrowedBy": "suzuki",
+      "borrowedAt": "2026-02-26T09:00:00.000Z",
+      "returnedAt": "2026-02-26T14:00:00.000Z",
+      "durationHours": 5
+    },
+    {
+      "id": "lh012",
+      "deviceId": "d003",
+      "borrowedBy": "admin",
+      "borrowedAt": "2026-02-21T09:00:00.000Z",
+      "returnedAt": "2026-02-21T15:00:00.000Z",
+      "durationHours": 6
+    },
+    {
+      "id": "lh013",
+      "deviceId": "d013",
+      "borrowedBy": "nakagawa",
+      "borrowedAt": "2026-02-16T09:00:00.000Z",
+      "returnedAt": "2026-02-16T16:00:00.000Z",
+      "durationHours": 7
+    },
+    {
+      "id": "lh014",
+      "deviceId": "d013",
+      "borrowedBy": "user",
+      "borrowedAt": "2026-02-11T09:00:00.000Z",
+      "returnedAt": "2026-02-11T17:00:00.000Z",
+      "durationHours": 8
+    },
+    {
+      "id": "lh015",
+      "deviceId": "d013",
+      "borrowedBy": "sato",
+      "borrowedAt": "2026-02-06T09:00:00.000Z",
+      "returnedAt": "2026-02-06T18:00:00.000Z",
+      "durationHours": 9
+    },
+    {
+      "id": "lh016",
+      "deviceId": "d013",
+      "borrowedBy": "suzuki",
+      "borrowedAt": "2026-04-17T09:00:00.000Z",
+      "returnedAt": "2026-04-17T17:00:00.000Z",
+      "durationHours": 8
+    },
+    {
+      "id": "lh017",
+      "deviceId": "d005",
+      "borrowedBy": "admin",
+      "borrowedAt": "2026-04-12T09:00:00.000Z",
+      "returnedAt": "2026-04-12T13:00:00.000Z",
+      "durationHours": 4
+    },
+    {
+      "id": "lh018",
+      "deviceId": "d005",
+      "borrowedBy": "nakagawa",
+      "borrowedAt": "2026-04-07T09:00:00.000Z",
+      "returnedAt": "2026-04-07T13:00:00.000Z",
+      "durationHours": 4
+    },
+    {
+      "id": "lh019",
+      "deviceId": "d005",
+      "borrowedBy": "user",
+      "borrowedAt": "2026-04-02T09:00:00.000Z",
+      "returnedAt": "2026-04-02T10:00:00.000Z",
+      "durationHours": 1
+    },
+    {
+      "id": "lh020",
+      "deviceId": "d006",
+      "borrowedBy": "sato",
+      "borrowedAt": "2026-03-28T09:00:00.000Z",
+      "returnedAt": "2026-03-28T12:00:00.000Z",
+      "durationHours": 3
+    },
+    {
+      "id": "lh021",
+      "deviceId": "d006",
+      "borrowedBy": "suzuki",
+      "borrowedAt": "2026-03-23T09:00:00.000Z",
+      "returnedAt": "2026-03-23T09:00:00.000Z",
+      "durationHours": 0
+    },
+    {
+      "id": "lh022",
+      "deviceId": "d021",
+      "borrowedBy": "admin",
+      "borrowedAt": "2026-03-18T09:00:00.000Z",
+      "returnedAt": "2026-03-18T13:00:00.000Z",
+      "durationHours": 4
+    },
+    {
+      "id": "lh023",
+      "deviceId": "d021",
+      "borrowedBy": "nakagawa",
+      "borrowedAt": "2026-03-13T09:00:00.000Z",
+      "returnedAt": "2026-03-13T14:00:00.000Z",
+      "durationHours": 5
+    },
+    {
+      "id": "lh024",
+      "deviceId": "d007",
+      "borrowedBy": "user",
+      "borrowedAt": "2026-03-08T09:00:00.000Z",
+      "returnedAt": "2026-03-08T11:00:00.000Z",
+      "durationHours": 2
+    },
+    {
+      "id": "lh025",
+      "deviceId": "d007",
+      "borrowedBy": "sato",
+      "borrowedAt": "2026-03-03T09:00:00.000Z",
+      "returnedAt": "2026-03-03T11:00:00.000Z",
+      "durationHours": 2
+    },
+    {
+      "id": "lh026",
+      "deviceId": "d008",
+      "borrowedBy": "suzuki",
+      "borrowedAt": "2026-02-26T09:00:00.000Z",
+      "returnedAt": "2026-02-26T11:00:00.000Z",
+      "durationHours": 2
+    },
+    {
+      "id": "lh027",
+      "deviceId": "d009",
+      "borrowedBy": "admin",
+      "borrowedAt": "2026-02-21T09:00:00.000Z",
+      "returnedAt": "2026-02-21T12:00:00.000Z",
+      "durationHours": 3
+    },
+    {
+      "id": "lh028",
+      "deviceId": "d009",
+      "borrowedBy": "nakagawa",
+      "borrowedAt": "2026-02-16T09:00:00.000Z",
+      "returnedAt": "2026-02-16T13:00:00.000Z",
+      "durationHours": 4
+    },
+    {
+      "id": "lh029",
+      "deviceId": "d036",
+      "borrowedBy": "user",
+      "borrowedAt": "2026-02-11T09:00:00.000Z",
+      "returnedAt": "2026-02-11T11:00:00.000Z",
+      "durationHours": 2
+    },
+    {
+      "id": "lh030",
+      "deviceId": "d011",
+      "borrowedBy": "sato",
+      "borrowedAt": "2026-02-06T09:00:00.000Z",
+      "returnedAt": "2026-02-06T11:00:00.000Z",
+      "durationHours": 2
+    },
+    {
+      "id": "lh031",
+      "deviceId": "d001",
+      "borrowedBy": "suzuki",
+      "borrowedAt": "2026-02-07T09:00:00.000Z",
+      "returnedAt": "2026-02-09T11:00:00.000Z",
+      "durationHours": 50
+    },
+    {
+      "id": "lh032",
+      "deviceId": "d013",
+      "borrowedBy": "user",
+      "borrowedAt": "2026-02-06T09:00:00.000Z",
+      "returnedAt": "2026-02-08T19:00:00.000Z",
+      "durationHours": 58
+    },
+    {
+      "id": "lh033",
+      "deviceId": "d016",
+      "borrowedBy": "nakagawa",
+      "borrowedAt": "2026-02-05T09:00:00.000Z",
+      "returnedAt": "2026-02-08T09:00:00.000Z",
+      "durationHours": 72
+    },
+    {
+      "id": "lh034",
+      "deviceId": "d005",
+      "borrowedBy": "user",
+      "borrowedAt": "2026-01-08T10:00:00Z",
+      "returnedAt": "2026-01-08T13:00:00.000Z",
+      "durationHours": 3
+    },
+    {
+      "id": "lh035",
+      "deviceId": "d006",
+      "borrowedBy": "sato",
+      "borrowedAt": "2026-01-09T14:00:00Z",
+      "returnedAt": "2026-01-09T18:00:00.000Z",
+      "durationHours": 4
+    },
+    {
+      "id": "lh036",
+      "deviceId": "d021",
+      "borrowedBy": "suzuki",
+      "borrowedAt": "2026-01-15T09:00:00Z",
+      "returnedAt": "2026-01-15T12:00:00.000Z",
+      "durationHours": 3
+    },
+    {
+      "id": "lh037",
+      "deviceId": "d022",
+      "borrowedBy": "nakagawa",
+      "borrowedAt": "2026-01-16T13:00:00Z",
+      "returnedAt": "2026-01-16T18:00:00.000Z",
+      "durationHours": 5
+    },
+    {
+      "id": "lh038",
+      "deviceId": "d023",
+      "borrowedBy": "admin",
+      "borrowedAt": "2026-01-22T10:00:00Z",
+      "returnedAt": "2026-01-22T13:00:00.000Z",
+      "durationHours": 3
+    },
+    {
+      "id": "lh039",
+      "deviceId": "d025",
+      "borrowedBy": "user",
+      "borrowedAt": "2026-01-23T14:00:00Z",
+      "returnedAt": "2026-01-23T18:00:00.000Z",
+      "durationHours": 4
+    },
+    {
+      "id": "lh040",
+      "deviceId": "d005",
+      "borrowedBy": "sato",
+      "borrowedAt": "2026-02-05T09:00:00Z",
+      "returnedAt": "2026-02-05T12:00:00.000Z",
+      "durationHours": 3
+    },
+    {
+      "id": "lh041",
+      "deviceId": "d006",
+      "borrowedBy": "suzuki",
+      "borrowedAt": "2026-02-06T13:00:00Z",
+      "returnedAt": "2026-02-06T17:00:00.000Z",
+      "durationHours": 4
+    },
+    {
+      "id": "lh042",
+      "deviceId": "d021",
+      "borrowedBy": "nakagawa",
+      "borrowedAt": "2026-02-12T10:00:00Z",
+      "returnedAt": "2026-02-12T15:00:00.000Z",
+      "durationHours": 5
+    },
+    {
+      "id": "lh043",
+      "deviceId": "d022",
+      "borrowedBy": "admin",
+      "borrowedAt": "2026-02-13T14:00:00Z",
+      "returnedAt": "2026-02-13T17:00:00.000Z",
+      "durationHours": 3
+    }
+  ]
+}

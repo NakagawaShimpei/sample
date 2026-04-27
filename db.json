@@ -1,13 +1,6 @@
 {
   "rooms": [
     {
-      "id": "r001",
-      "name": "第1会議室",
-      "location": "本社3F",
-      "capacity": 10,
-      "equipment": "プロジェクター, ホワイトボード"
-    },
-    {
       "id": "r002",
       "name": "第2会議室",
       "location": "本社3F",
@@ -293,20 +286,16 @@
       "location": "本社1F",
       "capacity": 8,
       "equipment": "TV, ソファー"
+    },
+    {
+      "name": "aa",
+      "location": "a",
+      "capacity": 4,
+      "equipment": "1",
+      "id": "rmogjro2ubs3zlc"
     }
   ],
   "reservations": [
-    {
-      "id": "res001",
-      "roomId": "r001",
-      "date": "2026-04-20",
-      "startTime": "10:00",
-      "endTime": "11:00",
-      "attendeeCount": 5,
-      "meetingName": "週次定例",
-      "reservedBy": "user",
-      "participants": "山田, 佐藤, 鈴木, 田中, 高橋"
-    },
     {
       "id": "res002",
       "roomId": "r004",
@@ -341,15 +330,15 @@
       "participants": "役員一同"
     },
     {
-      "roomId": "r001",
-      "date": "2026-04-20",
-      "startTime": "10:30",
-      "endTime": "11:30",
-      "attendeeCount": 2,
-      "meetingName": "テスト",
-      "reservedBy": "user",
-      "participants": "中川",
-      "id": "resmo76f6qoo7dmz7"
+      "roomId": "r002",
+      "date": "2026-04-03",
+      "startTime": "10:58",
+      "endTime": "10:00",
+      "attendeeCount": 1,
+      "meetingName": "1",
+      "reservedBy": "admin",
+      "participants": "1",
+      "id": "resmogjr0cx5a6vwr"
     }
   ],
   "devices": [
@@ -367,7 +356,7 @@
       "location": "本社3F IT室",
       "managementNumber": "PC-2023-002",
       "type": "ノートPC",
-      "status": "inUse"
+      "status": "available"
     },
     {
       "id": "d003",
@@ -692,12 +681,6 @@
   ],
   "loans": [
     {
-      "id": "ln001",
-      "deviceId": "d002",
-      "borrowedBy": "user",
-      "borrowedAt": "2026-04-20T08:00:00.000Z"
-    },
-    {
       "id": "ln002",
       "deviceId": "d006",
       "borrowedBy": "admin",
@@ -740,11 +723,11 @@
       "role": "user"
     },
     {
-      "username": "nakagawa",
-      "password": "password",
-      "displayName": "なかがわ",
+      "username": "aaa",
+      "password": "aaa",
+      "displayName": "aaa",
       "role": "user",
-      "id": "umo76oy1h29t47u"
+      "id": "umogjud68m6oouo"
     }
   ]
 }

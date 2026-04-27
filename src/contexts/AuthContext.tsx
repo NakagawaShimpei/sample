@@ -5,6 +5,7 @@ import { api } from '../api';
 interface AuthContextValue {
   currentUser: User | null;
   login: (username: string, password: string) => Promise<boolean>;
+  logout: () => void;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -49,8 +50,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const logout = () => {
+    setCurrentUser(null);
+  };
+
   return (
-    <AuthContext.Provider value={{ currentUser, login }}>
+    <AuthContext.Provider value={{ currentUser, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
