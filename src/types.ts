@@ -52,4 +52,5 @@ export interface Loan {
   deviceId: string;
   borrowedBy: string;
   borrowedAt: string;
+  returnDueDate?: string;
 }
