@@ -37,6 +37,11 @@ export const api = {
       body: JSON.stringify({ ...room, id: generateId('r') }),
     }),
   deleteRoom: (id: string) => request<void>(`/rooms/${id}`, { method: 'DELETE' }),
+  updateRoom: (id: string, data: Partial<Omit<Room, 'id'>>) =>
+    request<Room>(`/rooms/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    }),
 
   listReservations: () => request<Reservation[]>('/reservations'),
   createReservation: (reservation: Omit<Reservation, 'id'>) =>
@@ -64,6 +69,11 @@ export const api = {
     request<Device>(`/devices/${id}`, {
       method: 'PATCH',
       body: JSON.stringify({ status }),
+    }),
+  updateDevice: (id: string, data: Partial<Omit<Device, 'id' | 'status'>>) =>
+    request<Device>(`/devices/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(data),
     }),
 
   listUsers: () => request<UserRecord[]>('/users'),

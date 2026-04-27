@@ -13,10 +13,12 @@ interface DataContextValue {
   reload: () => Promise<void>;
   addRoom: (room: Omit<Room, 'id'>) => Promise<void>;
   deleteRoom: (id: string) => Promise<void>;
+  updateRoom: (id: string, data: Partial<Omit<Room, 'id'>>) => Promise<void>;
   addReservation: (reservation: Omit<Reservation, 'id'>) => Promise<void>;
   cancelReservation: (id: string) => Promise<void>;
   addDevice: (device: Omit<Device, 'id' | 'status'>) => Promise<void>;
   deleteDevice: (id: string) => Promise<void>;
+  updateDevice: (id: string, data: Partial<Omit<Device, 'id' | 'status'>>) => Promise<void>;
   borrowDevice: (deviceId: string, borrowedBy: string) => Promise<void>;
   returnDevice: (deviceId: string) => Promise<void>;
   addUser: (user: Omit<UserRecord, 'id' | 'role'>) => Promise<void>;
@@ -66,6 +68,11 @@ export function DataProvider({ children }: { children: ReactNode }) {
     setRooms((prev) => [...prev, created]);
   };
 
+  const updateRoom = async (id: string, data: Partial<Omit<Room, 'id'>>) => {
+    const updated = await api.updateRoom(id, data);
+    setRooms((prev) => prev.map((r) => (r.id === id ? updated : r)));
+  };
+
   const deleteRoom = async (id: string) => {
     await api.deleteReservationsByRoom(id);
     await api.deleteRoom(id);
@@ -86,6 +93,11 @@ export function DataProvider({ children }: { children: ReactNode }) {
   const addDevice = async (device: Omit<Device, 'id' | 'status'>) => {
     const created = await api.createDevice({ ...device, status: 'available' });
     setDevices((prev) => [...prev, created]);
+  };
+
+  const updateDevice = async (id: string, data: Partial<Omit<Device, 'id' | 'status'>>) => {
+    const updated = await api.updateDevice(id, data);
+    setDevices((prev) => prev.map((d) => (d.id === id ? updated : d)));
   };
 
   const deleteDevice = async (id: string) => {
@@ -136,10 +148,12 @@ export function DataProvider({ children }: { children: ReactNode }) {
         reload,
         addRoom,
         deleteRoom,
+        updateRoom,
         addReservation,
         cancelReservation,
         addDevice,
         deleteDevice,
+        updateDevice,
         borrowDevice,
         returnDevice,
         addUser,
