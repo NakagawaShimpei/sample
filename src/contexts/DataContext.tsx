@@ -81,6 +81,18 @@ export function DataProvider({ children }: { children: ReactNode }) {
   };
 
   const addReservation = async (reservation: Omit<Reservation, 'id'>) => {
+    const conflict = reservations.find(
+      (r) =>
+        r.roomId === reservation.roomId &&
+        r.date === reservation.date &&
+        r.startTime < reservation.endTime &&
+        r.endTime > reservation.startTime
+    );
+    if (conflict) {
+      throw new Error(
+        `${conflict.startTime}〜${conflict.endTime} にすでに予約が入っています。別の時間帯を選択してください。`
+      );
+    }
     const created = await api.createReservation(reservation);
     setReservations((prev) => [...prev, created]);
   };

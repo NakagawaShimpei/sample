@@ -2,8 +2,8 @@
   "rooms": [
     {
       "id": "r001",
-      "name": "第1a会議室",
-      "location": "本社4F",
+      "name": "第1会議室",
+      "location": "本社3F",
       "capacity": 15,
       "equipment": "プロジェクター, ホワイトボード、おやつ"
     },
@@ -361,6 +361,17 @@
       "reservedBy": "ando",
       "participants": "b",
       "id": "resmogjq3cj65g3lr"
+    },
+    {
+      "roomId": "r001",
+      "date": "2026-04-27",
+      "startTime": "13:30",
+      "endTime": "11:30",
+      "attendeeCount": 3,
+      "meetingName": "aaa",
+      "reservedBy": "admin",
+      "participants": "aaa",
+      "id": "resmogvjd66s1mmbm"
     }
   ],
   "devices": [
