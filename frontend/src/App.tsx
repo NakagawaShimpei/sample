@@ -4,6 +4,7 @@ import Layout from './components/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
 import { AuthProvider } from './contexts/AuthContext';
 import { DataProvider } from './contexts/DataContext';
+import DashboardPage from './pages/DashboardPage';
 import DeviceListPage from './pages/DeviceListPage';
 import DeviceRegisterPage from './pages/DeviceRegisterPage';
 import LoanListPage from './pages/LoanListPage';
@@ -79,6 +80,14 @@ function App() {
                 }
               />
               <Route path="/mfa/setup" element={<MfaSetupPage />} />
+              <Route
+                path="/dashboard"
+                element={
+                  <ProtectedRoute requireRole="admin">
+                    <DashboardPage />
+                  </ProtectedRoute>
+                }
+              />
             </Route>
             <Route path="*" element={<Navigate to="/login" replace />} />
           </Routes>

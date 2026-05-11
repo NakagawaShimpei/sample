@@ -1,7 +1,8 @@
+import { FC } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useData } from '../contexts/DataContext';
 
-export default function UserListPage() {
+const UserListPage: FC = () => {
   const { users, deleteUser } = useData();
   const { currentUser } = useAuth();
 
@@ -53,4 +54,6 @@ export default function UserListPage() {
       </table>
     </div>
   );
-}
+};
+
+export default UserListPage;

@@ -1,16 +1,16 @@
-import React, { useState } from 'react';
+import React, { FC, useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
-export default function LoginPage() {
+const LoginPage: FC = () => {
   const { login, mfaVerify, currentUser, isLoading } = useAuth();
   const navigate = useNavigate();
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [totpCode, setTotpCode] = useState('');
-  const [mfaToken, setMfaToken] = useState('');
+  const [username, setUsername] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [totpCode, setTotpCode] = useState<string>('');
+  const [mfaToken, setMfaToken] = useState<string>('');
   const [step, setStep] = useState<'password' | 'totp'>('password');
-  const [error, setError] = useState('');
+  const [error, setError] = useState<string>('');
 
   if (isLoading) return null;
   if (currentUser) return <Navigate to="/rooms" replace />;
@@ -150,4 +150,6 @@ export default function LoginPage() {
       </div>
     </div>
   );
-}
+};
+
+export default LoginPage;

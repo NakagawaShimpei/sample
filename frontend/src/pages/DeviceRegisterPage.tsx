@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { FC, SubmitEvent, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useData } from '../contexts/DataContext';
 import { DeviceType } from '../types';
@@ -11,16 +11,16 @@ const deviceTypes: DeviceType[] = [
   'その他',
 ];
 
-export default function DeviceRegisterPage() {
+const DeviceRegisterPage: FC = () => {
   const { addDevice } = useData();
   const navigate = useNavigate();
 
-  const [name, setName] = useState('');
-  const [location, setLocation] = useState('');
-  const [managementNumber, setManagementNumber] = useState('');
+  const [name, setName] = useState<string>('');
+  const [location, setLocation] = useState<string>('');
+  const [managementNumber, setManagementNumber] = useState<string>('');
   const [type, setType] = useState<DeviceType | ''>('');
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: SubmitEvent): Promise<void> => {
     e.preventDefault();
     if (!name || !location || !managementNumber || !type) {
       alert('すべての項目を入力してください。');
@@ -109,4 +109,6 @@ export default function DeviceRegisterPage() {
       </form>
     </div>
   );
-}
+};
+
+export default DeviceRegisterPage;

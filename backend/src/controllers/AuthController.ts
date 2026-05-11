@@ -40,7 +40,12 @@ const authController = {
   },
 
   logout(_req: Request, res: Response): void {
-    res.clearCookie('auth_token', { path: '/' });
+    res.clearCookie('auth_token', {
+      httpOnly: config.COOKIE_OPTIONS.httpOnly,
+      sameSite: config.COOKIE_OPTIONS.sameSite,
+      secure: config.COOKIE_OPTIONS.secure,
+      path: config.COOKIE_OPTIONS.path,
+    });
     res.json({ message: 'ログアウトしました' });
   },
 

@@ -1,17 +1,17 @@
-import React, { useState } from 'react';
+import { FC, SubmitEvent, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useData } from '../contexts/DataContext';
 
-export default function RoomRegisterPage() {
+const RoomRegisterPage: FC = () => {
   const { addRoom } = useData();
   const navigate = useNavigate();
 
-  const [name, setName] = useState('');
-  const [location, setLocation] = useState('');
-  const [capacity, setCapacity] = useState('');
-  const [equipment, setEquipment] = useState('');
+  const [name, setName] = useState<string>('');
+  const [location, setLocation] = useState<string>('');
+  const [capacity, setCapacity] = useState<string>('');
+  const [equipment, setEquipment] = useState<string>('');
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: SubmitEvent): Promise<void> => {
     e.preventDefault();
     if (!name || !location || !capacity || !equipment) {
       alert('すべての項目を入力してください。');
@@ -95,4 +95,6 @@ export default function RoomRegisterPage() {
       </form>
     </div>
   );
-}
+};
+
+export default RoomRegisterPage;

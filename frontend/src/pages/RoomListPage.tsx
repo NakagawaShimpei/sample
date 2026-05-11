@@ -1,8 +1,9 @@
 import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useData } from '../contexts/DataContext';
+import { FC } from 'react';
 
-export default function RoomListPage() {
+const RoomListPage: FC = () => {
   const { rooms, deleteRoom, reservations } = useData();
   const { currentUser } = useAuth();
   const isAdmin = currentUser?.role === 'admin';
@@ -65,4 +66,6 @@ export default function RoomListPage() {
       </table>
     </div>
   );
-}
+};
+
+export default RoomListPage;

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { FC } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { Role } from '../types';
@@ -8,7 +8,7 @@ interface Props {
   requireRole?: Role;
 }
 
-export default function ProtectedRoute({ children, requireRole }: Props) {
+const ProtectedRoute: FC<Props> = ({ children, requireRole }) => {
   const { currentUser, isLoading } = useAuth();
 
   if (isLoading) {
@@ -32,4 +32,6 @@ export default function ProtectedRoute({ children, requireRole }: Props) {
   }
 
   return <>{children}</>;
-}
+};
+
+export default ProtectedRoute;

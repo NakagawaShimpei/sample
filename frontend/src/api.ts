@@ -1,4 +1,13 @@
-import { Device, Loan, Reservation, Room, UserRecord } from './types';
+import {
+  Device,
+  Loan,
+  LoanHistory,
+  RecurringOptions,
+  Reservation,
+  ReservationHistory,
+  Room,
+  UserRecord,
+} from './types';
 
 const API_BASE = '/api';
 
@@ -43,8 +52,21 @@ export const api = {
       method: 'POST',
       body: JSON.stringify(reservation),
     }),
+  createRecurringReservation: (
+    payload: Omit<
+      Reservation,
+      'id' | 'recurringGroupId' | 'recurringPattern'
+    > &
+      RecurringOptions,
+  ) =>
+    request<{ created: Reservation[]; skipped: number }>(
+      '/reservations/recurring',
+      { method: 'POST', body: JSON.stringify(payload) },
+    ),
   deleteReservation: (id: string) =>
     request<void>(`/reservations/${id}`, { method: 'DELETE' }),
+  deleteReservationGroup: (groupId: string) =>
+    request<void>(`/reservations/group/${groupId}`, { method: 'DELETE' }),
   deleteReservationsByRoom: (roomId: string) =>
     request<void>(`/rooms/${roomId}`, { method: 'DELETE' }),
 
@@ -82,4 +104,8 @@ export const api = {
     request<void>(`/loans/${id}`, { method: 'DELETE' }),
   deleteLoanByDevice: (deviceId: string) =>
     request<void>(`/loans/device/${deviceId}`, { method: 'DELETE' }),
+
+  listReservationHistory: () =>
+    request<ReservationHistory[]>('/reservationHistory'),
+  listLoanHistory: () => request<LoanHistory[]>('/loanHistory'),
 };
