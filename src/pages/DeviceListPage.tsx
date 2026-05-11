@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useData } from '../contexts/DataContext';
 import { useAuth } from '../contexts/AuthContext';
 import { DeviceStatus } from '../types';
@@ -13,14 +13,18 @@ export default function DeviceListPage() {
   const { devices, borrowDevice, returnDevice, loans, deleteDevice } = useData();
   const { currentUser } = useAuth();
   const isAdmin = currentUser?.role === 'admin';
+  const [dueDates, setDueDates] = useState<Record<string, string>>({});
 
   const isBorrowedByMe = (deviceId: string) =>
     loans.some((l) => l.deviceId === deviceId && l.borrowedBy === currentUser?.username);
 
+  const getLoan = (deviceId: string) => loans.find((l) => l.deviceId === deviceId);
+
   const handleBorrow = async (id: string, name: string) => {
     if (!window.confirm(`「${name}」を貸出します。よろしいですか？`)) return;
     try {
-      await borrowDevice(id, currentUser?.username || '');
+      await borrowDevice(id, currentUser?.username || '', dueDates[id] || undefined);
+      setDueDates((prev) => { const next = { ...prev }; delete next[id]; return next; });
     } catch (e) {
       alert('貸出に失敗しました: ' + (e instanceof Error ? e.message : ''));
     }
@@ -56,6 +60,7 @@ export default function DeviceListPage() {
             <th>管理番号</th>
             <th>場所</th>
             <th>ステータス</th>
+            <th>返却予定日</th>
             <th>操作</th>
           </tr>
         </thead>
@@ -67,6 +72,17 @@ export default function DeviceListPage() {
               <td>{d.managementNumber}</td>
               <td>{d.location}</td>
               <td>{statusLabel(d.status)}</td>
+              <td>
+                {d.status === 'available' && (
+                  <input
+                    type="date"
+                    value={dueDates[d.id] || ''}
+                    min={new Date().toISOString().slice(0, 10)}
+                    onChange={(e) => setDueDates((prev) => ({ ...prev, [d.id]: e.target.value }))}
+                  />
+                )}
+                {d.status === 'inUse' && (getLoan(d.id)?.returnDueDate || '—')}
+              </td>
               <td>
                 {d.status === 'available' && (
                   <button type="button" className="link-button" onClick={() => handleBorrow(d.id, d.name)}>
