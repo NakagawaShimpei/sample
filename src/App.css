@@ -284,3 +284,35 @@ h2 {
 .disabled-text {
   color: #999;
 }
+
+.filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  padding: 6px 8px;
+  background: #f0f4ff;
+  border: 1px solid #99aacc;
+}
+
+.filter-input {
+  font-family: inherit;
+  font-size: 13px;
+  padding: 2px 4px;
+  border: 1px solid #666;
+  width: 80px;
+}
+
+.filter-hint {
+  color: #444;
+  font-size: 12px;
+}
+
+.capacity-warning {
+  color: #c00;
+  background: #fde0e0;
+  border: 1px solid #c00;
+  padding: 3px 8px;
+  margin: 4px 0 0 0;
+  font-size: 12px;
+}

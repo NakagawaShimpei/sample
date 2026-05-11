@@ -28,6 +28,8 @@ export default function RoomReservePage() {
     );
   }
 
+  const isOverCapacity = attendeeCount !== '' && Number(attendeeCount) > room.capacity;
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!date || !startTime || !endTime || !attendeeCount || !meetingName || !reservedBy || !participants) {
@@ -88,7 +90,14 @@ export default function RoomReservePage() {
             </tr>
             <tr>
               <th>人数 <span className="req">*</span></th>
-              <td><input type="number" min="1" value={attendeeCount} onChange={(e) => setAttendeeCount(e.target.value)} /></td>
+              <td>
+                <input type="number" min="1" value={attendeeCount} onChange={(e) => setAttendeeCount(e.target.value)} />
+                {isOverCapacity && (
+                  <p className="capacity-warning">
+                    定員を超えています（定員: {room.capacity}名 / 入力: {attendeeCount}名）
+                  </p>
+                )}
+              </td>
             </tr>
             <tr>
               <th>会議名 <span className="req">*</span></th>
@@ -106,7 +115,7 @@ export default function RoomReservePage() {
         </table>
         <p className="form-hint">※ すべての項目が必須です。</p>
         <div className="form-actions">
-          <input type="submit" value="予約する" />
+          <input type="submit" value="予約する" disabled={isOverCapacity} />
           <Link to="/rooms">キャンセル</Link>
         </div>
       </form>
