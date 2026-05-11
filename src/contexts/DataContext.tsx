@@ -17,7 +17,7 @@ interface DataContextValue {
   cancelReservation: (id: string) => Promise<void>;
   addDevice: (device: Omit<Device, 'id' | 'status'>) => Promise<void>;
   deleteDevice: (id: string) => Promise<void>;
-  borrowDevice: (deviceId: string, borrowedBy: string) => Promise<void>;
+  borrowDevice: (deviceId: string, borrowedBy: string, returnDueDate?: string) => Promise<void>;
   returnDevice: (deviceId: string) => Promise<void>;
   addUser: (user: Omit<UserRecord, 'id' | 'role'>) => Promise<void>;
   deleteUser: (id: string) => Promise<void>;
@@ -95,12 +95,13 @@ export function DataProvider({ children }: { children: ReactNode }) {
     setLoans((prev) => prev.filter((l) => l.deviceId !== id));
   };
 
-  const borrowDevice = async (deviceId: string, borrowedBy: string) => {
+  const borrowDevice = async (deviceId: string, borrowedBy: string, returnDueDate?: string) => {
     const updated = await api.updateDeviceStatus(deviceId, 'inUse');
     const loan = await api.createLoan({
       deviceId,
       borrowedBy,
       borrowedAt: new Date().toISOString(),
+      ...(returnDueDate ? { returnDueDate } : {}),
     });
     setDevices((prev) => prev.map((d) => (d.id === deviceId ? updated : d)));
     setLoans((prev) => [...prev, loan]);
