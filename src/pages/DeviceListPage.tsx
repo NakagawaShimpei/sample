@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useData } from '../contexts/DataContext';
 import { useAuth } from '../contexts/AuthContext';
 import { DeviceStatus } from '../types';
@@ -12,6 +13,7 @@ const statusLabel = (status: DeviceStatus): string => {
 export default function DeviceListPage() {
   const { devices, borrowDevice, returnDevice, loans, deleteDevice } = useData();
   const { currentUser } = useAuth();
+  const navigate = useNavigate();
   const isAdmin = currentUser?.role === 'admin';
 
   const isBorrowedByMe = (deviceId: string) =>
@@ -85,6 +87,14 @@ export default function DeviceListPage() {
                 )}
                 {isAdmin && (
                   <>
+                    {' | '}
+                    <button
+                      type="button"
+                      className="link-button"
+                      onClick={() => navigate(`/devices/${d.id}/edit`)}
+                    >
+                      編集
+                    </button>
                     {' | '}
                     <button
                       type="button"

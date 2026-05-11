@@ -4,8 +4,8 @@
       "id": "r001",
       "name": "第1会議室",
       "location": "本社3F",
-      "capacity": 10,
-      "equipment": "プロジェクター, ホワイトボード"
+      "capacity": 15,
+      "equipment": "プロジェクター, ホワイトボード、おやつ"
     },
     {
       "id": "r002",
@@ -34,13 +34,6 @@
       "location": "本社5F",
       "capacity": 20,
       "equipment": "プロジェクター, マイク"
-    },
-    {
-      "id": "r006",
-      "name": "役員会議室",
-      "location": "本社7F",
-      "capacity": 12,
-      "equipment": "プロジェクター, Web会議システム, TV会議"
     },
     {
       "id": "r007",
@@ -293,6 +286,13 @@
       "location": "本社1F",
       "capacity": 8,
       "equipment": "TV, ソファー"
+    },
+    {
+      "name": "aaa",
+      "location": "bbb",
+      "capacity": 20,
+      "equipment": "ccc",
+      "id": "rmogjnw81lg5ru1"
     }
   ],
   "reservations": [
@@ -330,17 +330,6 @@
       "participants": "開発チーム"
     },
     {
-      "id": "res004",
-      "roomId": "r006",
-      "date": "2026-04-22",
-      "startTime": "09:00",
-      "endTime": "10:30",
-      "attendeeCount": 8,
-      "meetingName": "役員ミーティング",
-      "reservedBy": "admin",
-      "participants": "役員一同"
-    },
-    {
       "roomId": "r001",
       "date": "2026-04-20",
       "startTime": "10:30",
@@ -350,15 +339,48 @@
       "reservedBy": "user",
       "participants": "中川",
       "id": "resmo76f6qoo7dmz7"
+    },
+    {
+      "roomId": "r001",
+      "date": "2026-04-15",
+      "startTime": "11:50",
+      "endTime": "12:50",
+      "attendeeCount": 5,
+      "meetingName": "安渡テスト",
+      "reservedBy": "user",
+      "participants": "A\nB\nC\nD\nE",
+      "id": "resmogjin4dmw6u56"
+    },
+    {
+      "roomId": "r001",
+      "date": "2026-04-27",
+      "startTime": "10:56",
+      "endTime": "11:56",
+      "attendeeCount": 1,
+      "meetingName": "a",
+      "reservedBy": "ando",
+      "participants": "b",
+      "id": "resmogjq3cj65g3lr"
+    },
+    {
+      "roomId": "r001",
+      "date": "2026-04-27",
+      "startTime": "13:30",
+      "endTime": "11:30",
+      "attendeeCount": 3,
+      "meetingName": "aaa",
+      "reservedBy": "admin",
+      "participants": "aaa",
+      "id": "resmogvjd66s1mmbm"
     }
   ],
   "devices": [
     {
       "id": "d001",
-      "name": "ノートPC-01",
-      "location": "本社3F IT室",
-      "managementNumber": "PC-2023-001",
-      "type": "ノートPC",
+      "name": "ノートPC-012",
+      "location": "本社3F IT室 a",
+      "managementNumber": "PC-2023-0012",
+      "type": "プロジェクター",
       "status": "available"
     },
     {
@@ -367,7 +389,7 @@
       "location": "本社3F IT室",
       "managementNumber": "PC-2023-002",
       "type": "ノートPC",
-      "status": "inUse"
+      "status": "available"
     },
     {
       "id": "d003",
@@ -392,14 +414,6 @@
       "managementNumber": "PJ-2022-001",
       "type": "プロジェクター",
       "status": "available"
-    },
-    {
-      "id": "d006",
-      "name": "プロジェクター-B",
-      "location": "本社5F 備品庫",
-      "managementNumber": "PJ-2022-002",
-      "type": "プロジェクター",
-      "status": "inUse"
     },
     {
       "id": "d007",
@@ -623,7 +637,7 @@
       "location": "本社3F IT室",
       "managementNumber": "HS-2024-002",
       "type": "その他",
-      "status": "inUse"
+      "status": "available"
     },
     {
       "id": "d035",
@@ -688,21 +702,17 @@
       "managementNumber": "SP-2023-001",
       "type": "その他",
       "status": "inUse"
+    },
+    {
+      "name": "A",
+      "location": "B",
+      "managementNumber": "C",
+      "type": "その他",
+      "status": "available",
+      "id": "dmogjoud04uwo5b"
     }
   ],
   "loans": [
-    {
-      "id": "ln001",
-      "deviceId": "d002",
-      "borrowedBy": "user",
-      "borrowedAt": "2026-04-20T08:00:00.000Z"
-    },
-    {
-      "id": "ln002",
-      "deviceId": "d006",
-      "borrowedBy": "admin",
-      "borrowedAt": "2026-04-19T10:00:00.000Z"
-    },
     {
       "id": "ln003",
       "deviceId": "d010",
@@ -745,6 +755,13 @@
       "displayName": "なかがわ",
       "role": "user",
       "id": "umo76oy1h29t47u"
+    },
+    {
+      "username": "ando",
+      "password": "ando",
+      "displayName": "ando",
+      "role": "user",
+      "id": "umogjpgead853w8"
     }
   ]
 }

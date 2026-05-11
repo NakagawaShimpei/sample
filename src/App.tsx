@@ -14,6 +14,8 @@ import LoanListPage from './pages/LoanListPage';
 import DeviceRegisterPage from './pages/DeviceRegisterPage';
 import UserListPage from './pages/UserListPage';
 import UserRegisterPage from './pages/UserRegisterPage';
+import RoomEditPage from './pages/RoomEditPage';
+import DeviceEditPage from './pages/DeviceEditPage';
 import './App.css';
 
 function App() {
@@ -42,6 +44,14 @@ function App() {
                   </ProtectedRoute>
                 }
               />
+              <Route
+                path="/rooms/:id/edit"
+                element={
+                  <ProtectedRoute requireRole="admin">
+                    <RoomEditPage />
+                  </ProtectedRoute>
+                }
+              />
               <Route path="/devices" element={<DeviceListPage />} />
               <Route
                 path="/loans"
@@ -56,6 +66,14 @@ function App() {
                 element={
                   <ProtectedRoute requireRole="admin">
                     <DeviceRegisterPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/devices/:id/edit"
+                element={
+                  <ProtectedRoute requireRole="admin">
+                    <DeviceEditPage />
                   </ProtectedRoute>
                 }
               />

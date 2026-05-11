@@ -1,11 +1,12 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useData } from '../contexts/DataContext';
 import { useAuth } from '../contexts/AuthContext';
 
 export default function RoomListPage() {
   const { rooms, deleteRoom, reservations } = useData();
   const { currentUser } = useAuth();
+  const navigate = useNavigate();
   const isAdmin = currentUser?.role === 'admin';
 
   const today = new Date().toISOString().slice(0, 10);
@@ -48,6 +49,14 @@ export default function RoomListPage() {
                 <Link to={`/rooms/${room.id}/reserve`}>予約する</Link>
                 {isAdmin && (
                   <>
+                    {' | '}
+                    <button
+                      type="button"
+                      className="link-button"
+                      onClick={() => navigate(`/rooms/${room.id}/edit`)}
+                    >
+                      編集
+                    </button>
                     {' | '}
                     <button
                       type="button"
