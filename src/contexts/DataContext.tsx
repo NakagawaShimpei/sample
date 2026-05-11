@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
-import { Room, Device, Reservation, Loan, UserRecord } from '../types';
+import { Room, Device, Reservation, Loan, UserRecord, RecurringReservation } from '../types';
 import { api } from '../api';
 
 interface DataContextValue {
@@ -23,6 +23,8 @@ interface DataContextValue {
   returnDevice: (deviceId: string) => Promise<void>;
   addUser: (user: Omit<UserRecord, 'id' | 'role'>) => Promise<void>;
   deleteUser: (id: string) => Promise<void>;
+  addRecurringReservation: (recurringData: Omit<RecurringReservation, 'id'>, dates: string[]) => Promise<void>;
+  cancelRecurringSeries: (recurringId: string, fromDate: string) => Promise<void>;
 }
 
 const DataContext = createContext<DataContextValue | undefined>(undefined);
@@ -147,6 +149,53 @@ export function DataProvider({ children }: { children: ReactNode }) {
     setUsers((prev) => prev.filter((u) => u.id !== id));
   };
 
+  const addRecurringReservation = async (
+    recurringData: Omit<RecurringReservation, 'id'>,
+    dates: string[]
+  ): Promise<void> => {
+    const DAY_NAMES = ['日', '月', '火', '水', '木', '金', '土'];
+    const conflicts: Array<{ date: string; conflict: Reservation }> = [];
+    for (const d of dates) {
+      const conflict = reservations.find(
+        (r) =>
+          r.roomId === recurringData.roomId &&
+          r.date === d &&
+          r.startTime < recurringData.endTime &&
+          r.endTime > recurringData.startTime
+      );
+      if (conflict) conflicts.push({ date: d, conflict });
+    }
+    if (conflicts.length > 0) {
+      const lines = conflicts.map(({ date: d, conflict }) => {
+        const dt = new Date(`${d}T00:00:00`);
+        const dayName = DAY_NAMES[dt.getDay()];
+        return `  ・${dt.getMonth() + 1}月${dt.getDate()}日（${dayName}）${conflict.startTime}〜${conflict.endTime} にすでに予約が入っています`;
+      });
+      throw new Error(
+        `以下の日程に予約の重複があります:\n${lines.join('\n')}\n終了日を変更するか、重複している日程をご確認ください。`
+      );
+    }
+    const reservationPayloads: Omit<Reservation, 'id'>[] = dates.map((d) => ({
+      roomId: recurringData.roomId,
+      date: d,
+      startTime: recurringData.startTime,
+      endTime: recurringData.endTime,
+      attendeeCount: recurringData.attendeeCount,
+      meetingName: recurringData.meetingName,
+      reservedBy: recurringData.reservedBy,
+      participants: recurringData.participants,
+    }));
+    const result = await api.createRecurringReservation(recurringData, reservationPayloads);
+    setReservations((prev) => [...prev, ...result.reservations]);
+  };
+
+  const cancelRecurringSeries = async (recurringId: string, fromDate: string): Promise<void> => {
+    await api.cancelRecurringSeries(recurringId, fromDate);
+    setReservations((prev) =>
+      prev.filter((r) => !(r.recurrenceId === recurringId && r.date >= fromDate))
+    );
+  };
+
   return (
     <DataContext.Provider
       value={{
@@ -170,6 +219,8 @@ export function DataProvider({ children }: { children: ReactNode }) {
         returnDevice,
         addUser,
         deleteUser,
+        addRecurringReservation,
+        cancelRecurringSeries,
       }}
     >
       {children}

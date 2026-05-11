@@ -32,6 +32,26 @@ export interface Reservation {
   meetingName: string;
   reservedBy: string;
   participants: string;
+  recurrenceId?: string;
+}
+
+export type RecurrenceType = 'weekly' | 'biweekly' | 'monthly' | 'custom';
+
+export interface RecurringReservation {
+  id: string;
+  roomId: string;
+  startTime: string;
+  endTime: string;
+  attendeeCount: number;
+  meetingName: string;
+  reservedBy: string;
+  participants: string;
+  recurrenceType: RecurrenceType;
+  dayOfWeek?: number;
+  dayOfMonth?: number;
+  intervalDays?: number;
+  startDate: string;
+  endDate: string;
 }
 
 export type DeviceType = 'ノートPC' | 'プロジェクター' | 'Web会議機器' | 'モニター' | 'その他';

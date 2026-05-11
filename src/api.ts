@@ -1,4 +1,4 @@
-import { Room, Device, Reservation, Loan, UserRecord } from './types';
+import { Room, Device, Reservation, Loan, UserRecord, RecurringReservation } from './types';
 
 const API_BASE = '';
 
@@ -98,5 +98,37 @@ export const api = {
     await Promise.all(
       loans.map((l) => request<void>(`/loans/${l.id}`, { method: 'DELETE' }))
     );
+  },
+
+  createRecurringReservation: async (
+    recurring: Omit<RecurringReservation, 'id'>,
+    reservations: Omit<Reservation, 'id'>[]
+  ): Promise<{ recurring: RecurringReservation; reservations: Reservation[] }> => {
+    const recurringId = generateId('rr');
+    const parent = await request<RecurringReservation>('/recurringReservations', {
+      method: 'POST',
+      body: JSON.stringify({ ...recurring, id: recurringId }),
+    });
+    const created = await Promise.all(
+      reservations.map((r) =>
+        request<Reservation>('/reservations', {
+          method: 'POST',
+          body: JSON.stringify({ ...r, id: generateId('res'), recurrenceId: recurringId }),
+        })
+      )
+    );
+    return { recurring: parent, reservations: created };
+  },
+
+  cancelRecurringSeries: async (recurringId: string, fromDate: string): Promise<void> => {
+    const all = await request<Reservation[]>(`/reservations?recurrenceId=${recurringId}`);
+    const toDelete = all.filter((r) => r.date >= fromDate);
+    await Promise.all(
+      toDelete.map((r) => request<void>(`/reservations/${r.id}`, { method: 'DELETE' }))
+    );
+    const remaining = all.filter((r) => r.date < fromDate);
+    if (remaining.length === 0) {
+      await request<void>(`/recurringReservations/${recurringId}`, { method: 'DELETE' });
+    }
   },
 };
