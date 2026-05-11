@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { FC, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useData } from '../contexts/DataContext';
 
-export default function UserRegisterPage() {
+const UserRegisterPage: FC = () => {
   const { addUser } = useData();
   const navigate = useNavigate();
 
@@ -77,4 +77,6 @@ export default function UserRegisterPage() {
       </form>
     </div>
   );
-}
+};
+
+export default UserRegisterPage;

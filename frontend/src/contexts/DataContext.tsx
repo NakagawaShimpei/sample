@@ -7,7 +7,7 @@ import {
   useState,
 } from 'react';
 import { api } from '../api';
-import { Device, Loan, Reservation, Room, UserRecord } from '../types';
+import { Device, Loan, RecurringOptions, Reservation, Room, UserRecord } from '../types';
 import { useAuth } from './AuthContext';
 
 interface NewUser {
@@ -15,6 +15,7 @@ interface NewUser {
   password: string;
   displayName: string;
 }
+
 
 interface DataContextValue {
   rooms: Room[];
@@ -28,10 +29,15 @@ interface DataContextValue {
   addRoom: (room: Omit<Room, 'id'>) => Promise<void>;
   deleteRoom: (id: string) => Promise<void>;
   addReservation: (reservation: Omit<Reservation, 'id'>) => Promise<void>;
+  addRecurringReservation: (
+    reservation: Omit<Reservation, 'id' | 'recurringGroupId' | 'recurringPattern'>,
+    opts: RecurringOptions,
+  ) => Promise<{ created: number; skipped: number }>;
   cancelReservation: (id: string) => Promise<void>;
+  cancelReservationGroup: (groupId: string) => Promise<void>;
   addDevice: (device: Omit<Device, 'id' | 'status'>) => Promise<void>;
   deleteDevice: (id: string) => Promise<void>;
-  borrowDevice: (deviceId: string, borrowedBy: string) => Promise<void>;
+  borrowDevice: (deviceId: string, borrowedBy: string, expectedReturnAt?: string) => Promise<void>;
   returnDevice: (deviceId: string) => Promise<void>;
   addUser: (user: NewUser) => Promise<void>;
   deleteUser: (id: string) => Promise<void>;
@@ -53,12 +59,13 @@ export function DataProvider({ children }: { children: ReactNode }) {
     setLoading(true);
     setError(null);
     try {
+      const isAdmin = currentUser?.role === 'admin';
       const [r, d, res, l, u] = await Promise.all([
         api.listRooms(),
         api.listDevices(),
         api.listReservations(),
         api.listLoans(),
-        api.listUsers(),
+        isAdmin ? api.listUsers() : Promise.resolve([] as UserRecord[]),
       ]);
       setRooms(r);
       setDevices(d);
@@ -70,7 +77,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [currentUser?.role]);
 
   // ログイン状態が確定したときだけデータを取得／ログアウト時はクリア
   useEffect(() => {
@@ -103,9 +110,23 @@ export function DataProvider({ children }: { children: ReactNode }) {
     setReservations((prev) => [...prev, created]);
   };
 
+  const addRecurringReservation = async (
+    reservation: Omit<Reservation, 'id' | 'recurringGroupId' | 'recurringPattern'>,
+    opts: RecurringOptions,
+  ): Promise<{ created: number; skipped: number }> => {
+    const result = await api.createRecurringReservation({ ...reservation, ...opts });
+    setReservations((prev) => [...prev, ...result.created]);
+    return { created: result.created.length, skipped: result.skipped };
+  };
+
   const cancelReservation = async (id: string) => {
     await api.deleteReservation(id);
     setReservations((prev) => prev.filter((r) => r.id !== id));
+  };
+
+  const cancelReservationGroup = async (groupId: string) => {
+    await api.deleteReservationGroup(groupId);
+    setReservations((prev) => prev.filter((r) => r.recurringGroupId !== groupId));
   };
 
   const addDevice = async (device: Omit<Device, 'id' | 'status'>) => {
@@ -119,13 +140,15 @@ export function DataProvider({ children }: { children: ReactNode }) {
     setLoans((prev) => prev.filter((l) => l.deviceId !== id));
   };
 
-  const borrowDevice = async (deviceId: string, borrowedBy: string) => {
+  const borrowDevice = async (deviceId: string, borrowedBy: string, expectedReturnAt?: string) => {
     const updated = await api.updateDeviceStatus(deviceId, 'inUse');
-    const loan = await api.createLoan({
+    const loanData: Omit<Loan, 'id'> = {
       deviceId,
       borrowedBy,
       borrowedAt: new Date().toISOString(),
-    });
+    };
+    if (expectedReturnAt) loanData.expectedReturnAt = expectedReturnAt;
+    const loan = await api.createLoan(loanData);
     setDevices((prev) => prev.map((d) => (d.id === deviceId ? updated : d)));
     setLoans((prev) => [...prev, loan]);
   };
@@ -164,7 +187,9 @@ export function DataProvider({ children }: { children: ReactNode }) {
         addRoom,
         deleteRoom,
         addReservation,
+        addRecurringReservation,
         cancelReservation,
+        cancelReservationGroup,
         addDevice,
         deleteDevice,
         borrowDevice,

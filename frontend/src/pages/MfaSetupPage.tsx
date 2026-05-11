@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { FC, useState } from 'react';
 
 type SetupState = 'idle' | 'loading' | 'ready' | 'verifying' | 'done' | 'error';
 
-export default function MfaSetupPage() {
+const MfaSetupPage: FC = () => {
   const [state, setState] = useState<SetupState>('idle');
   const [qrCode, setQrCode] = useState('');
   const [secret, setSecret] = useState('');
@@ -161,4 +161,6 @@ export default function MfaSetupPage() {
       {state === 'error' && <p style={{ color: '#dc3545' }}>{message}</p>}
     </div>
   );
-}
+};
+
+export default MfaSetupPage;

@@ -23,6 +23,10 @@ const loanController = {
     await loanService.deleteByDevice(deviceId);
     res.status(204).send();
   },
+
+  getAlerts(_req: Request, res: Response): void {
+    res.json(loanService.findAlerts());
+  },
 };
 
 export default loanController;
