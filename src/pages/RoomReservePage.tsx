@@ -1,23 +1,65 @@
-import React, { useState } from 'react';
-import { useNavigate, useParams, Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams, Link, useSearchParams } from 'react-router-dom';
 import { useData } from '../contexts/DataContext';
 import { useAuth } from '../contexts/AuthContext';
+import type { Room } from '../types';
+
+const RECOMMEND_TRIGGER_CAPACITY = 20;
+const RECOMMEND_TRIGGER_MAX_ATTENDEES = 4;
+const RECOMMEND_MAX_COUNT = 5;
 
 export default function RoomReservePage() {
   const { roomId } = useParams<{ roomId: string }>();
   const { rooms, addReservation } = useData();
   const { currentUser } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   const room = rooms.find((r) => r.id === roomId);
 
-  const [date, setDate] = useState('');
-  const [startTime, setStartTime] = useState('');
-  const [endTime, setEndTime] = useState('');
-  const [attendeeCount, setAttendeeCount] = useState('');
+  const [date, setDate] = useState(searchParams.get('date') || '');
+  const [startTime, setStartTime] = useState(searchParams.get('startTime') || '');
+  const [endTime, setEndTime] = useState(searchParams.get('endTime') || '');
+  const [attendeeCount, setAttendeeCount] = useState(searchParams.get('attendeeCount') || '');
   const [meetingName, setMeetingName] = useState('');
   const [reservedBy, setReservedBy] = useState(currentUser?.displayName || '');
   const [participants, setParticipants] = useState('');
+  const [recommended, setRecommended] = useState<Room[]>([]);
+
+  useEffect(() => {
+    if (!room) return;
+    const count = Number(attendeeCount);
+    if (
+      room.capacity >= RECOMMEND_TRIGGER_CAPACITY &&
+      count >= 1 &&
+      count <= RECOMMEND_TRIGGER_MAX_ATTENDEES
+    ) {
+      const selectedEquipment = room.equipment
+        .split(',')
+        .map((e) => e.trim())
+        .filter((e) => e !== '-');
+
+      const scored = rooms
+        .filter((r) => r.id !== room.id)
+        .filter((r) => r.capacity >= count)
+        .filter((r) => r.capacity <= room.capacity)
+        .map((r) => {
+          const rEquipment = r.equipment.split(',').map((e) => e.trim()).filter((e) => e !== '-');
+          const commonCount = rEquipment.filter((e) => selectedEquipment.includes(e)).length;
+          const locationScore =
+            r.location === room.location ? 2
+            : r.location.startsWith('本社') ? 1
+            : 0;
+          return { ...r, score: commonCount * 10 + locationScore };
+        })
+        .sort((a, b) => b.score - a.score)
+        .slice(0, RECOMMEND_MAX_COUNT);
+
+      setRecommended(scored);
+    } else {
+      setRecommended([]);
+    }
+  }, [attendeeCount, room, rooms]);
 
   if (!room) {
     return (
@@ -52,10 +94,19 @@ export default function RoomReservePage() {
     }
   };
 
+  const buildReserveParams = () => {
+    const params = new URLSearchParams();
+    if (date) params.set('date', date);
+    if (startTime) params.set('startTime', startTime);
+    if (endTime) params.set('endTime', endTime);
+    if (attendeeCount) params.set('attendeeCount', attendeeCount);
+    return params.toString();
+  };
+
   return (
     <div>
       <h2>会議室予約</h2>
-      <p>予約対象: <strong>{room.name}</strong> ({room.location} / 定員{room.capacity}名)</p>
+      <p>予約対象: <strong>{room.name}</strong> ({room.location} / 定員{room.capacity}名 / 設備: {room.equipment === '-' ? 'なし' : room.equipment})</p>
       <form onSubmit={handleSubmit}>
         <table className="form-table">
           <tbody>
@@ -75,6 +126,48 @@ export default function RoomReservePage() {
               <th>人数 <span className="req">*</span></th>
               <td><input type="number" min="1" value={attendeeCount} onChange={(e) => setAttendeeCount(e.target.value)} /></td>
             </tr>
+            {recommended.length > 0 && (
+              <tr>
+                <td colSpan={2} style={{ padding: 0, border: 'none' }}>
+                  <div className="recommend-panel">
+                    <p className="recommend-message">参加人数が少ないため、以下の会議室もご検討ください。</p>
+                    <table className="data-table">
+                      <thead>
+                        <tr>
+                          <th>会議室名</th>
+                          <th>場所</th>
+                          <th>定員</th>
+                          <th>設備</th>
+                          <th></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {recommended.map((r) => {
+                          const equip = r.equipment.split(',').map((e) => e.trim()).filter((e) => e !== '-');
+                          return (
+                            <tr key={r.id}>
+                              <td>{r.name}</td>
+                              <td>{r.location}</td>
+                              <td>{r.capacity}名</td>
+                              <td>{equip.length > 0 ? equip.join('、') : 'なし'}</td>
+                              <td>
+                                <button
+                                  type="button"
+                                  className="link-button"
+                                  onClick={() => navigate(`/rooms/${r.id}/reserve?${buildReserveParams()}`)}
+                                >
+                                  この部屋で予約する
+                                </button>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                </td>
+              </tr>
+            )}
             <tr>
               <th>会議名 <span className="req">*</span></th>
               <td><input type="text" value={meetingName} onChange={(e) => setMeetingName(e.target.value)} /></td>
