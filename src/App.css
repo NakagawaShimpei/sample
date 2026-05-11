@@ -316,3 +316,17 @@ h2 {
 .disabled-text {
   color: #999;
 }
+
+.recommend-panel {
+  background: #fff8e8;
+  border: 1px solid #c8a000;
+  padding: 8px 10px;
+  margin: 4px 0;
+}
+
+.recommend-message {
+  margin: 0 0 8px 0;
+  font-size: 12px;
+  color: #665500;
+  font-weight: bold;
+}
