@@ -1,5 +1,8 @@
 import React, { FC, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { useData } from '../contexts/DataContext';
 
 const UserRegisterPage: FC = () => {
@@ -26,54 +29,48 @@ const UserRegisterPage: FC = () => {
   };
 
   return (
-    <div>
-      <h2>ユーザー登録（管理者）</h2>
-      <p>新しい利用者アカウントを登録します。ロールは「利用者」になります。</p>
-      <form onSubmit={handleSubmit}>
-        <table className="form-table">
-          <tbody>
-            <tr>
-              <th>
-                ユーザー名 <span className="req">*</span>
-              </th>
-              <td>
-                <input
-                  type="text"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                />
-              </td>
-            </tr>
-            <tr>
-              <th>
-                パスワード <span className="req">*</span>
-              </th>
-              <td>
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-              </td>
-            </tr>
-            <tr>
-              <th>
-                表示名 <span className="req">*</span>
-              </th>
-              <td>
-                <input
-                  type="text"
-                  value={displayName}
-                  onChange={(e) => setDisplayName(e.target.value)}
-                />
-              </td>
-            </tr>
-          </tbody>
-        </table>
-        <p className="form-hint">※ すべての項目が必須です。</p>
-        <div className="form-actions">
-          <input type="submit" value="登録する" />
+    <div className="max-w-lg">
+      <h2 className="text-base font-semibold border-l-4 border-slate-700 pl-2 mt-0 mb-4">
+        ユーザー登録（管理者）
+      </h2>
+      <p className="text-sm text-muted-foreground mb-4">
+        新しい利用者アカウントを登録します。ロールは「利用者」になります。
+      </p>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="grid grid-cols-[150px_1fr] items-center gap-x-4 gap-y-4">
+          <Label htmlFor="username">
+            ユーザー名 <span className="text-destructive font-bold">*</span>
+          </Label>
+          <Input
+            id="username"
+            type="text"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+          />
+
+          <Label htmlFor="password">
+            パスワード <span className="text-destructive font-bold">*</span>
+          </Label>
+          <Input
+            id="password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+
+          <Label htmlFor="displayName">
+            表示名 <span className="text-destructive font-bold">*</span>
+          </Label>
+          <Input
+            id="displayName"
+            type="text"
+            value={displayName}
+            onChange={(e) => setDisplayName(e.target.value)}
+          />
         </div>
+
+        <p className="text-xs text-muted-foreground">※ すべての項目が必須です。</p>
+        <Button type="submit">登録する</Button>
       </form>
     </div>
   );

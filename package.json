@@ -5,7 +5,7 @@
   "scripts": {
     "start": "concurrently -k -n API,APP -c blue,green \"npm:start:api\" \"npm:start:app\"",
     "start:api": "npm run dev --prefix backend",
-    "start:app": "npm start --prefix frontend",
+    "start:app": "npm run dev --prefix frontend",
     "build": "npm run build --prefix frontend",
     "install:all": "npm install && npm install --prefix frontend && npm install --prefix backend"
   },

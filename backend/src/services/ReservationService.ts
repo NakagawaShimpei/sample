@@ -1,4 +1,5 @@
 import { reservationRepository } from '../repositories/ReservationRepository';
+import { roomRepository } from '../repositories/RoomRepository';
 import { RecurringOptions, Reservation } from '../types';
 
 function toMinutes(time: string): number {
@@ -189,12 +190,20 @@ const reservationService = {
   },
 
   async create(data: Omit<Reservation, 'id'>): Promise<Reservation> {
+    const room = roomRepository.findById(data.roomId);
+    if (!room) {
+      throw Object.assign(new Error('指定の会議室が存在しません'), { status: 400 });
+    }
+    if (data.attendeeCount > room.capacity) {
+      throw Object.assign(
+        new Error(`参加人数（${data.attendeeCount}名）が定員（${room.capacity}名）を超えています`),
+        { status: 400 },
+      );
+    }
     const existing = reservationRepository.findAll();
     const conflict = existing.find((r) => hasOverlap(r, data));
     if (conflict) {
-      throw Object.assign(new Error('指定の日時はすでに予約が入っています'), {
-        status: 409,
-      });
+      throw Object.assign(new Error('指定の日時はすでに予約が入っています'), { status: 409 });
     }
     return reservationRepository.create(data);
   },
@@ -202,25 +211,39 @@ const reservationService = {
   async createRecurring(
     data: Omit<Reservation, 'id' | 'recurringGroupId' | 'recurringPattern'>,
     opts: RecurringOptions,
-  ): Promise<{ created: Reservation[]; skipped: number }> {
+  ): Promise<{ created: Reservation[]; skippedDates: string[] }> {
+    const room = roomRepository.findById(data.roomId);
+    if (!room) {
+      throw Object.assign(new Error('指定の会議室が存在しません'), { status: 400 });
+    }
+    if (data.attendeeCount > room.capacity) {
+      throw Object.assign(
+        new Error(`参加人数（${data.attendeeCount}名）が定員（${room.capacity}名）を超えています`),
+        { status: 400 },
+      );
+    }
     const dates = generateDates(data.date, opts);
     const recurringGroupId = generateGroupId();
     const recurringPattern = describePattern(opts);
     const created: Reservation[] = [];
-    let skipped = 0;
+    const skippedDates: string[] = [];
+
+    // DBへのアクセスをループ外で1回だけ行い、作成済みを追記して次の重複チェックにも使う
+    const existing = reservationRepository.findAll();
 
     for (const date of dates) {
       const candidate = { ...data, date, recurringGroupId, recurringPattern };
-      const existing = reservationRepository.findAll();
       const conflict = existing.find((r) => hasOverlap(r, candidate));
       if (conflict) {
-        skipped++;
+        skippedDates.push(date);
         continue;
       }
-      created.push(await reservationRepository.create(candidate));
+      const saved = await reservationRepository.create(candidate);
+      created.push(saved);
+      existing.push(saved); // 以降のループで自グループ内の重複もチェックできるようにする
     }
 
-    return { created, skipped };
+    return { created, skippedDates };
   },
 
   async delete(id: string): Promise<void> {

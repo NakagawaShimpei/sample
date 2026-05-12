@@ -4,6 +4,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useRef,
   useState,
 } from 'react';
 import { api } from '../api';
@@ -16,7 +17,6 @@ interface NewUser {
   displayName: string;
 }
 
-
 interface DataContextValue {
   rooms: Room[];
   devices: Device[];
@@ -25,14 +25,19 @@ interface DataContextValue {
   users: UserRecord[];
   loading: boolean;
   error: string | null;
-  reload: () => Promise<void>;
+  // 個別リロード: 各ページが必要なリソースのみ呼ぶ
+  reloadRooms: () => Promise<void>;
+  reloadDevices: () => Promise<void>;
+  reloadReservations: () => Promise<void>;
+  reloadLoans: () => Promise<void>;
+  reloadUsers: () => Promise<void>;
   addRoom: (room: Omit<Room, 'id'>) => Promise<void>;
   deleteRoom: (id: string) => Promise<void>;
   addReservation: (reservation: Omit<Reservation, 'id'>) => Promise<void>;
   addRecurringReservation: (
     reservation: Omit<Reservation, 'id' | 'recurringGroupId' | 'recurringPattern'>,
     opts: RecurringOptions,
-  ) => Promise<{ created: number; skipped: number }>;
+  ) => Promise<{ created: number; skippedDates: string[] }>;
   cancelReservation: (id: string) => Promise<void>;
   cancelReservationGroup: (groupId: string) => Promise<void>;
   addDevice: (device: Omit<Device, 'id' | 'status'>) => Promise<void>;
@@ -52,47 +57,74 @@ export function DataProvider({ children }: { children: ReactNode }) {
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [loans, setLoans] = useState<Loan[]>([]);
   const [users, setUsers] = useState<UserRecord[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loadCount, setLoadCount] = useState(0);
   const [error, setError] = useState<string | null>(null);
 
-  const reload = useCallback(async () => {
-    setLoading(true);
-    setError(null);
+  // 同一リソースへの重複並行リクエストを防ぐフラグ
+  const inflight = useRef(new Set<string>());
+
+  const loading = loadCount > 0;
+
+  // 汎用ローダー: key が飛行中なら即リターン
+  const withLoad = useCallback(async (key: string, fetcher: () => Promise<void>) => {
+    if (inflight.current.has(key)) return;
+    inflight.current.add(key);
+    setLoadCount((c) => c + 1);
     try {
-      const isAdmin = currentUser?.role === 'admin';
-      const [r, d, res, l, u] = await Promise.all([
-        api.listRooms(),
-        api.listDevices(),
-        api.listReservations(),
-        api.listLoans(),
-        isAdmin ? api.listUsers() : Promise.resolve([] as UserRecord[]),
-      ]);
-      setRooms(r);
-      setDevices(d);
-      setReservations(res);
-      setLoans(l);
-      setUsers(u);
+      await fetcher();
     } catch (e) {
       setError(e instanceof Error ? e.message : 'データ取得に失敗しました');
     } finally {
-      setLoading(false);
+      inflight.current.delete(key);
+      setLoadCount((c) => c - 1);
     }
-  }, [currentUser?.role]);
+  }, []);
 
-  // ログイン状態が確定したときだけデータを取得／ログアウト時はクリア
+  const reloadRooms = useCallback(
+    () => withLoad('rooms', async () => setRooms(await api.listRooms())),
+    [withLoad],
+  );
+
+  const reloadDevices = useCallback(
+    () => withLoad('devices', async () => setDevices(await api.listDevices())),
+    [withLoad],
+  );
+
+  const reloadReservations = useCallback(
+    () => withLoad('reservations', async () => setReservations(await api.listReservations())),
+    [withLoad],
+  );
+
+  const reloadLoans = useCallback(
+    () => withLoad('loans', async () => setLoans(await api.listLoans())),
+    [withLoad],
+  );
+
+  const reloadUsers = useCallback(
+    () =>
+      withLoad('users', async () => {
+        if (currentUser?.role === 'admin') {
+          setUsers(await api.listUsers());
+        }
+      }),
+    [withLoad, currentUser?.role],
+  );
+
+  // ログアウト時にすべてのデータをクリア
   useEffect(() => {
-    if (currentUser) {
-      reload();
-    } else {
+    if (!currentUser) {
       setRooms([]);
       setDevices([]);
       setReservations([]);
       setLoans([]);
       setUsers([]);
-      setLoading(false);
       setError(null);
+      inflight.current.clear();
+      setLoadCount(0);
     }
-  }, [currentUser, reload]);
+  }, [currentUser]);
+
+  // ── ミューテーション関数（変更なし）────────────────────────────
 
   const addRoom = async (room: Omit<Room, 'id'>) => {
     const created = await api.createRoom(room);
@@ -113,10 +145,10 @@ export function DataProvider({ children }: { children: ReactNode }) {
   const addRecurringReservation = async (
     reservation: Omit<Reservation, 'id' | 'recurringGroupId' | 'recurringPattern'>,
     opts: RecurringOptions,
-  ): Promise<{ created: number; skipped: number }> => {
+  ): Promise<{ created: number; skippedDates: string[] }> => {
     const result = await api.createRecurringReservation({ ...reservation, ...opts });
     setReservations((prev) => [...prev, ...result.created]);
-    return { created: result.created.length, skipped: result.skipped };
+    return { created: result.created.length, skippedDates: result.skippedDates };
   };
 
   const cancelReservation = async (id: string) => {
@@ -156,9 +188,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
   const returnDevice = async (deviceId: string) => {
     await api.deleteLoanByDevice(deviceId);
     setDevices((prev) =>
-      prev.map((d) =>
-        d.id === deviceId ? { ...d, status: 'available' as const } : d,
-      ),
+      prev.map((d) => (d.id === deviceId ? { ...d, status: 'available' as const } : d)),
     );
     setLoans((prev) => prev.filter((l) => l.deviceId !== deviceId));
   };
@@ -183,7 +213,11 @@ export function DataProvider({ children }: { children: ReactNode }) {
         users,
         loading,
         error,
-        reload,
+        reloadRooms,
+        reloadDevices,
+        reloadReservations,
+        reloadLoans,
+        reloadUsers,
         addRoom,
         deleteRoom,
         addReservation,

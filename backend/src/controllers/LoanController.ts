@@ -8,9 +8,18 @@ const loanController = {
   },
 
   async create(req: Request, res: Response): Promise<void> {
-    const data = req.body as Omit<Loan, 'id'>;
-    const loan = await loanService.create(data);
-    res.status(201).json(loan);
+    try {
+      const data = req.body as Omit<Loan, 'id'>;
+      if (!data.deviceId || !data.borrowedBy) {
+        res.status(400).json({ error: 'deviceId と borrowedBy は必須です' });
+        return;
+      }
+      const loan = await loanService.create(data);
+      res.status(201).json(loan);
+    } catch (e) {
+      const status = (e as { status?: number }).status ?? 500;
+      res.status(status).json({ error: (e as Error).message });
+    }
   },
 
   async remove(req: Request, res: Response): Promise<void> {

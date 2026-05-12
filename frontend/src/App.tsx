@@ -7,7 +7,6 @@ import { DataProvider } from './contexts/DataContext';
 import DashboardPage from './pages/DashboardPage';
 import DeviceListPage from './pages/DeviceListPage';
 import DeviceRegisterPage from './pages/DeviceRegisterPage';
-import LoanListPage from './pages/LoanListPage';
 import LoginPage from './pages/LoginPage';
 import MfaSetupPage from './pages/MfaSetupPage';
 import ReservationListPage from './pages/ReservationListPage';
@@ -47,14 +46,6 @@ function App() {
                 }
               />
               <Route path="/devices" element={<DeviceListPage />} />
-              <Route
-                path="/loans"
-                element={
-                  <ProtectedRoute requireRole="admin">
-                    <LoanListPage />
-                  </ProtectedRoute>
-                }
-              />
               <Route
                 path="/devices/register"
                 element={

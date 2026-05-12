@@ -12,7 +12,11 @@ const ProtectedRoute: FC<Props> = ({ children, requireRole }) => {
   const { currentUser, isLoading } = useAuth();
 
   if (isLoading) {
-    return <div className="banner banner-loading">読み込み中...</div>;
+    return (
+      <div className="px-4 py-2 text-xs text-amber-700 bg-amber-50 border-b border-amber-200">
+        読み込み中...
+      </div>
+    );
   }
 
   if (!currentUser) {
@@ -21,11 +25,10 @@ const ProtectedRoute: FC<Props> = ({ children, requireRole }) => {
 
   if (requireRole && currentUser.role !== requireRole) {
     return (
-      <div className="error-page">
-        <h2>アクセス権限がありません</h2>
-        <p>
-          この機能は{requireRole === 'admin' ? '管理者' : '利用者'}
-          のみ利用できます。
+      <div className="p-8 text-center">
+        <h2 className="text-base font-semibold text-destructive mb-2">アクセス権限がありません</h2>
+        <p className="text-sm text-muted-foreground">
+          この機能は{requireRole === 'admin' ? '管理者' : '利用者'}のみ利用できます。
         </p>
       </div>
     );

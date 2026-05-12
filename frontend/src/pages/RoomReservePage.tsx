@@ -1,10 +1,15 @@
 import { FC, FormEvent, useEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Button, buttonVariants } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import { cn } from '@/lib/utils';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import { useAuth } from '../contexts/AuthContext';
 import { useData } from '../contexts/DataContext';
 import { RecurringOptions, RecurringPatternType } from '../types';
 
-// ─── 時刻ユーティリティ ────────────────────────────────────────────
 const timeToMins = (t: string): number => {
   if (!t) return 0;
   const [h, m] = t.split(':').map(Number);
@@ -18,20 +23,24 @@ const minsToTime = (mins: number): string => {
   return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
 };
 
-const formatDuration = (mins: number): string => {
-  const h = Math.floor(mins / 60);
-  const m = mins % 60;
-  if (h === 0) return `${m}分`;
-  if (m === 0) return `${h}時間`;
-  return `${h}時間${m}分`;
+const roundUpTo10Min = (): string => {
+  const now = new Date();
+  const totalMins = now.getHours() * 60 + now.getMinutes();
+  return minsToTime(Math.ceil(totalMins / 10) * 10);
 };
 
-const DURATION_PRESETS = [15, 30, 45, 60, 90, 120, 150, 180, 210, 240, 300, 360, 420, 480];
+const nextHalfHourAfter = (startMins: number): string => {
+  return minsToTime(Math.ceil((startMins + 1) / 30) * 30);
+};
 
-// ─── 定数 ─────────────────────────────────────────────────────────
+const nextDay = (dateStr: string): string => {
+  const d = new Date(dateStr);
+  d.setDate(d.getDate() + 1);
+  return d.toISOString().slice(0, 10);
+};
 const DAY_LABELS = ['日', '月', '火', '水', '木', '金', '土'];
 const MONTH_LABELS = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
-const WEEK_ORDINALS: { label: string; value: number }[] = [
+const WEEK_ORDINALS = [
   { label: '第1', value: 1 },
   { label: '第2', value: 2 },
   { label: '第3', value: 3 },
@@ -39,27 +48,11 @@ const WEEK_ORDINALS: { label: string; value: number }[] = [
   { label: '最終', value: 5 },
 ];
 
-// ─── 初期値生成 ────────────────────────────────────────────────────
-const initFromDate = (dateStr: string): {
-  weekDays: number[];
-  monthlyDayOfMonth: number;
-  monthlyWeekOfMonth: number;
-  monthlyDayOfWeek: number;
-  yearlyMonth: number;
-  yearlyDayOfMonth: number;
-  yearlyWeekOfMonth: number;
-  yearlyDayOfWeek: number;
-} => {
+const initFromDate = (dateStr: string) => {
   if (!dateStr) {
     return {
-      weekDays: [1],
-      monthlyDayOfMonth: 1,
-      monthlyWeekOfMonth: 1,
-      monthlyDayOfWeek: 1,
-      yearlyMonth: 1,
-      yearlyDayOfMonth: 1,
-      yearlyWeekOfMonth: 1,
-      yearlyDayOfWeek: 1,
+      weekDays: [1], monthlyDayOfMonth: 1, monthlyWeekOfMonth: 1, monthlyDayOfWeek: 1,
+      yearlyMonth: 1, yearlyDayOfMonth: 1, yearlyWeekOfMonth: 1, yearlyDayOfWeek: 1,
     };
   }
   const d = new Date(dateStr);
@@ -77,48 +70,47 @@ const initFromDate = (dateStr: string): {
   };
 };
 
-// ─── コンポーネント ────────────────────────────────────────────────
+const selectCls = 'h-8 rounded-lg border border-input bg-transparent px-2 py-1 text-sm outline-none focus:border-ring focus:ring-2 focus:ring-ring/50 disabled:opacity-50';
+const numCls = 'h-8 w-16 rounded-lg border border-input bg-transparent px-2 py-1 text-sm text-center outline-none focus:border-ring focus:ring-2 focus:ring-ring/50 disabled:opacity-50';
+
 const RoomReservePage: FC = () => {
   const { roomId } = useParams<{ roomId: string }>();
-  const { rooms, addReservation, addRecurringReservation } = useData();
+  const { rooms, addReservation, addRecurringReservation, reloadRooms } = useData();
   const { currentUser } = useAuth();
   const navigate = useNavigate();
 
+  useEffect(() => {
+    reloadRooms();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const room = rooms.find((r) => r.id === roomId);
 
-  // 基本フォーム
-  const [date, setDate] = useState('');
-  const [startTime, setStartTime] = useState('');
-  const [endTime, setEndTime] = useState('');
-  const [durationMins, setDurationMins] = useState(60);
+  const [startDate, setStartDate] = useState(() => new Date().toISOString().slice(0, 10));
+  const [startTime, setStartTime] = useState(roundUpTo10Min);
+  const [endDate, setEndDate] = useState(() => new Date().toISOString().slice(0, 10));
+  const [endTime, setEndTime] = useState(() => nextHalfHourAfter(timeToMins(roundUpTo10Min())));
+  const [isAllDay, setIsAllDay] = useState(false);
   const [attendeeCount, setAttendeeCount] = useState('');
   const [meetingName, setMeetingName] = useState('');
-  const [reservedBy, setReservedBy] = useState(currentUser?.displayName || '');
+  const [reservedBy] = useState(currentUser?.displayName || '');
   const [participants, setParticipants] = useState('');
 
-  // 繰り返し有効フラグ
   const [isRecurring, setIsRecurring] = useState(false);
   const prevIsRecurring = useRef(false);
-
-  // パターン種別
   const [patternType, setPatternType] = useState<RecurringPatternType>('weekly');
 
-  // 日単位
   const [dailyInterval, setDailyInterval] = useState(1);
   const [weekdaysOnly, setWeekdaysOnly] = useState(false);
-
-  // 週単位
   const [weeklyInterval, setWeeklyInterval] = useState(1);
   const [weekDays, setWeekDays] = useState<number[]>([1]);
 
-  // 月単位
   const [monthlyInterval, setMonthlyInterval] = useState(1);
   const [monthlySubtype, setMonthlySubtype] = useState<'dayOfMonth' | 'dayOfWeek'>('dayOfMonth');
   const [monthlyDayOfMonth, setMonthlyDayOfMonth] = useState(1);
   const [monthlyWeekOfMonth, setMonthlyWeekOfMonth] = useState(1);
   const [monthlyDayOfWeek, setMonthlyDayOfWeek] = useState(1);
 
-  // 年単位
   const [yearlyInterval, setYearlyInterval] = useState(1);
   const [yearlySubtype, setYearlySubtype] = useState<'dayOfMonth' | 'dayOfWeek'>('dayOfMonth');
   const [yearlyMonth, setYearlyMonth] = useState(1);
@@ -126,15 +118,13 @@ const RoomReservePage: FC = () => {
   const [yearlyWeekOfMonth, setYearlyWeekOfMonth] = useState(1);
   const [yearlyDayOfWeek, setYearlyDayOfWeek] = useState(1);
 
-  // 期間
   const [endType, setEndType] = useState<'endDate' | 'count' | 'noEnd'>('count');
   const [recurEndDate, setRecurEndDate] = useState('');
   const [recurCount, setRecurCount] = useState(10);
 
-  // 繰り返しONになった瞬間だけ日付から初期値を設定
   useEffect(() => {
-    if (isRecurring && !prevIsRecurring.current && date) {
-      const init = initFromDate(date);
+    if (isRecurring && !prevIsRecurring.current && startDate) {
+      const init = initFromDate(startDate);
       setWeekDays(init.weekDays);
       setMonthlyDayOfMonth(init.monthlyDayOfMonth);
       setMonthlyWeekOfMonth(init.monthlyWeekOfMonth);
@@ -145,25 +135,30 @@ const RoomReservePage: FC = () => {
       setYearlyDayOfWeek(init.yearlyDayOfWeek);
     }
     prevIsRecurring.current = isRecurring;
-  }, [isRecurring, date]);
+  }, [isRecurring, startDate]);
 
-  // ─── 時刻ハンドラ ─────────────────────────────────────────────
-  const handleStartChange = (v: string) => {
+  const handleStartDateChange = (v: string) => {
+    setStartDate(v);
+    if (endDate < v) setEndDate(v);
+  };
+
+  const handleStartTimeChange = (v: string) => {
     setStartTime(v);
-    if (v && durationMins > 0) setEndTime(minsToTime(timeToMins(v) + durationMins));
+    if (v && endDate === startDate) setEndTime(nextHalfHourAfter(timeToMins(v)));
   };
 
-  const handleEndChange = (v: string) => {
-    setEndTime(v);
-    if (startTime && v) {
-      const diff = timeToMins(v) - timeToMins(startTime);
-      if (diff > 0) setDurationMins(diff);
+  const handleAllDayChange = (checked: boolean) => {
+    setIsAllDay(checked);
+    if (checked) {
+      setStartTime('00:00');
+      setEndDate(nextDay(startDate));
+      setEndTime('00:00');
+    } else {
+      const start = roundUpTo10Min();
+      setStartTime(start);
+      setEndDate(startDate);
+      setEndTime(nextHalfHourAfter(timeToMins(start)));
     }
-  };
-
-  const handleDurationChange = (mins: number) => {
-    setDurationMins(mins);
-    if (startTime) setEndTime(minsToTime(timeToMins(startTime) + mins));
   };
 
   const toggleWeekDay = (dow: number, checked: boolean) => {
@@ -172,61 +167,43 @@ const RoomReservePage: FC = () => {
     );
   };
 
-  // ─── オプション組み立て ───────────────────────────────────────
   const buildOpts = (): RecurringOptions => ({
-    patternType,
-    dailyInterval,
-    weekdaysOnly,
-    weeklyInterval,
-    weekDays,
-    monthlyInterval,
-    monthlySubtype,
-    monthlyDayOfMonth,
-    monthlyWeekOfMonth,
-    monthlyDayOfWeek,
-    yearlyInterval,
-    yearlySubtype,
-    yearlyMonth,
-    yearlyDayOfMonth,
-    yearlyWeekOfMonth,
-    yearlyDayOfWeek,
+    patternType, dailyInterval, weekdaysOnly, weeklyInterval, weekDays,
+    monthlyInterval, monthlySubtype, monthlyDayOfMonth, monthlyWeekOfMonth, monthlyDayOfWeek,
+    yearlyInterval, yearlySubtype, yearlyMonth, yearlyDayOfMonth, yearlyWeekOfMonth, yearlyDayOfWeek,
     endType,
     endDate: endType === 'endDate' ? recurEndDate : undefined,
     count: endType === 'count' ? recurCount : undefined,
   });
 
-  // ─── バリデーション ───────────────────────────────────────────
   const validateRecurring = (): string | null => {
-    if (patternType === 'weekly' && weekDays.length === 0)
-      return '繰り返す曜日を1つ以上選択してください。';
-    if (patternType === 'daily' && !weekdaysOnly && dailyInterval < 1)
-      return '間隔は1以上を入力してください。';
-    if (endType === 'endDate' && !recurEndDate)
-      return '終了日を入力してください。';
-    if (endType === 'endDate' && recurEndDate < date)
-      return '終了日は開始日以降を指定してください。';
-    if (endType === 'count' && recurCount < 1)
-      return '反復回数は1以上を入力してください。';
+    if (patternType === 'weekly' && weekDays.length === 0) return '繰り返す曜日を1つ以上選択してください。';
+    if (patternType === 'daily' && !weekdaysOnly && dailyInterval < 1) return '間隔は1以上を入力してください。';
+    if (endType === 'endDate' && !recurEndDate) return '終了日を入力してください。';
+    if (endType === 'endDate' && recurEndDate < startDate) return '終了日は開始日以降を指定してください。';
+    if (endType === 'count' && recurCount < 1) return '反復回数は1以上を入力してください。';
     return null;
   };
 
-  // ─── 送信 ────────────────────────────────────────────────────
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (!date || !startTime || !endTime || !attendeeCount || !meetingName || !reservedBy || !participants) {
+    if (!startDate || !endDate || !attendeeCount || !meetingName.trim() || !reservedBy.trim()) {
       alert('すべての項目を入力してください。');
       return;
     }
+    const today = new Date().toISOString().slice(0, 10);
+    if (startDate < today) { alert('過去の日付には予約できません。'); return; }
+    if (endDate < startDate) { alert('終了日は開始日以降を指定してください。'); return; }
+    if (!isAllDay && endDate === startDate && timeToMins(endTime) <= timeToMins(startTime)) {
+      alert('終了時刻は開始時刻より後にしてください。'); return;
+    }
+    const count = Number(attendeeCount);
+    if (!Number.isInteger(count) || count < 1) { alert('参加人数は1以上の整数を入力してください。'); return; }
+    if (room && count > room.capacity) { alert(`参加人数（${count}名）が定員（${room.capacity}名）を超えています。`); return; }
 
     const base = {
-      roomId: room!.id,
-      date,
-      startTime,
-      endTime,
-      attendeeCount: Number(attendeeCount),
-      meetingName,
-      reservedBy: currentUser?.username || '',
-      participants,
+      roomId: room!.id, date: startDate, startTime: isAllDay ? '00:00' : startTime, endTime: isAllDay ? '23:59' : endTime, attendeeCount: count,
+      meetingName, reservedBy: currentUser?.username || '', participants,
     };
 
     if (!isRecurring) {
@@ -244,14 +221,16 @@ const RoomReservePage: FC = () => {
     if (validErr) { alert(validErr); return; }
 
     try {
-      const { created, skipped } = await addRecurringReservation(base, buildOpts());
-      alert(
-        created === 0
-          ? '予約を作成できませんでした（すべて重複のためスキップ）。'
-          : skipped > 0
-            ? `${created}件の予約を登録しました。（${skipped}件は重複のためスキップ）`
-            : `${created}件の予約を登録しました。`,
-      );
+      const { created, skippedDates } = await addRecurringReservation(base, buildOpts());
+      if (created === 0) {
+        alert('予約を作成できませんでした（すべての日程が重複しています）。\n\n重複日程:\n' + skippedDates.join('\n'));
+        return;
+      }
+      if (skippedDates.length > 0) {
+        alert(`${created}件の予約を登録しました。\n\n以下の${skippedDates.length}件は重複しているためスキップされました:\n` + skippedDates.join('\n'));
+      } else {
+        alert(`${created}件の予約を登録しました。`);
+      }
       navigate('/reservations');
     } catch (err) {
       alert('予約に失敗しました: ' + (err instanceof Error ? err.message : ''));
@@ -261,177 +240,136 @@ const RoomReservePage: FC = () => {
   if (!room) {
     return (
       <div>
-        <p>会議室が見つかりません。</p>
-        <Link to="/rooms">会議室一覧に戻る</Link>
+        <p className="text-sm">会議室が見つかりません。</p>
+        <Link to="/rooms" className={cn(buttonVariants({ variant: 'link' }), 'p-0 h-auto')}>
+          会議室一覧に戻る
+        </Link>
       </div>
     );
   }
 
-  // ─── 期間セレクトのオプション ────────────────────────────────
-  const durationOptions = DURATION_PRESETS.includes(durationMins)
-    ? DURATION_PRESETS
-    : [...DURATION_PRESETS, durationMins].sort((a, b) => a - b);
-
   return (
-    <div>
-      <h2>会議室予約</h2>
-      <p>
+    <div className="max-w-2xl">
+      <h2 className="text-base font-semibold border-l-4 border-slate-700 pl-2 mt-0 mb-3">
+        会議室予約
+      </h2>
+      <p className="text-sm text-muted-foreground mb-4">
         予約対象: <strong>{room.name}</strong>（{room.location} / 定員{room.capacity}名）
       </p>
-      <form onSubmit={handleSubmit}>
-        <table className="form-table">
-          <tbody>
-            {/* ── 基本情報 ── */}
-            <tr>
-              <th>日付 <span className="req">*</span></th>
-              <td>
-                <input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
-              </td>
-            </tr>
-            <tr>
-              <th>開始時刻 <span className="req">*</span></th>
-              <td style={{ display: 'flex', gap: '12px', alignItems: 'center', flexWrap: 'wrap' }}>
-                <input type="time" value={startTime} onChange={(e) => handleStartChange(e.target.value)} />
-                <label>
-                  終了時刻:{' '}
-                  <input type="time" value={endTime} onChange={(e) => handleEndChange(e.target.value)} />
-                </label>
-                <label>
-                  期間:{' '}
-                  <select
-                    value={durationMins}
-                    onChange={(e) => handleDurationChange(Number(e.target.value))}
-                  >
-                    {durationOptions.map((m) => (
-                      <option key={m} value={m}>{formatDuration(m)}</option>
-                    ))}
-                  </select>
-                </label>
-              </td>
-            </tr>
-            <tr>
-              <th>人数 <span className="req">*</span></th>
-              <td>
-                <input type="number" min="1" value={attendeeCount} onChange={(e) => setAttendeeCount(e.target.value)} />
-              </td>
-            </tr>
-            <tr>
-              <th>会議名 <span className="req">*</span></th>
-              <td>
-                <input type="text" value={meetingName} onChange={(e) => setMeetingName(e.target.value)} />
-              </td>
-            </tr>
-            <tr>
-              <th>予約者名 <span className="req">*</span></th>
-              <td>
-                <input type="text" value={reservedBy} onChange={(e) => setReservedBy(e.target.value)} />
-              </td>
-            </tr>
-            <tr>
-              <th>参加者 <span className="req">*</span></th>
-              <td>
-                <textarea value={participants} onChange={(e) => setParticipants(e.target.value)} rows={3} />
-              </td>
-            </tr>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="grid grid-cols-[160px_1fr] items-start gap-x-4 gap-y-4">
+          <Label className="pt-1.5">
+            開始 <span className="text-destructive font-bold">*</span>
+          </Label>
+          <div className="flex items-center gap-2">
+            <Input
+              type="date"
+              value={startDate}
+              min={new Date().toISOString().slice(0, 10)}
+              onChange={(e) => handleStartDateChange(e.target.value)}
+              className="w-auto"
+            />
+            <Input
+              type="time"
+              value={startTime}
+              disabled={isAllDay}
+              onChange={(e) => handleStartTimeChange(e.target.value)}
+              className="w-auto"
+            />
+            <div className="flex items-center gap-1.5 ml-1">
+              <Checkbox
+                checked={isAllDay}
+                onCheckedChange={(v) => handleAllDayChange(v as boolean)}
+                id="all-day-toggle"
+              />
+              <label htmlFor="all-day-toggle" className="text-sm cursor-pointer select-none">
+                終日
+              </label>
+            </div>
+          </div>
 
-            {/* ── 繰り返しチェックボックス ── */}
-            <tr>
-              <th>繰り返し予約</th>
-              <td>
-                <label>
-                  <input
-                    type="checkbox"
-                    checked={isRecurring}
-                    onChange={(e) => setIsRecurring(e.target.checked)}
-                  />{' '}
-                  繰り返し予約にする
-                </label>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+          <Label className="pt-1.5">
+            終了 <span className="text-destructive font-bold">*</span>
+          </Label>
+          <div className="flex items-center gap-2">
+            <Input
+              type="date"
+              value={endDate}
+              min={startDate}
+              onChange={(e) => setEndDate(e.target.value)}
+              className="w-auto"
+            />
+            <Input
+              type="time"
+              value={endTime}
+              disabled={isAllDay}
+              onChange={(e) => setEndTime(e.target.value)}
+              className="w-auto"
+            />
+            <div className="flex items-center gap-1.5 ml-1">
+              <Checkbox
+                checked={isRecurring}
+                onCheckedChange={(v) => setIsRecurring(v as boolean)}
+                id="recurring-toggle"
+              />
+              <label htmlFor="recurring-toggle" className="text-sm cursor-pointer select-none">
+                繰り返し
+              </label>
+            </div>
+          </div>
+        </div>
 
-        {/* ── 繰り返し設定パネル ── */}
         {isRecurring && (
-          <div className="recur-panel">
-            {/* パターンの設定 */}
-            <fieldset className="recur-fieldset">
-              <legend>パターンの設定</legend>
+          <div className="border border-slate-200 rounded-lg p-4 bg-slate-50 space-y-4">
+            {/* パターン設定 */}
+            <fieldset className="border border-slate-300 rounded p-3">
+              <legend className="text-xs font-semibold px-1 text-slate-600">パターンの設定</legend>
 
-              {/* パターン種別ラジオ */}
-              <div className="recur-pattern-tabs">
+              <div className="flex gap-4 mb-3">
                 {(['daily', 'weekly', 'monthly', 'yearly'] as RecurringPatternType[]).map((pt) => (
-                  <label key={pt} className="recur-tab-label">
+                  <label key={pt} className="flex items-center gap-1 text-sm font-medium cursor-pointer">
                     <input
                       type="radio"
                       name="patternType"
                       value={pt}
                       checked={patternType === pt}
                       onChange={() => setPatternType(pt)}
-                    />{' '}
+                      className="accent-slate-700"
+                    />
                     {pt === 'daily' ? '日' : pt === 'weekly' ? '週' : pt === 'monthly' ? '月' : '年'}
                   </label>
                 ))}
               </div>
 
-              {/* 日単位 */}
               {patternType === 'daily' && (
-                <div className="recur-sub">
-                  <label>
-                    <input
-                      type="radio"
-                      name="dailySub"
-                      checked={!weekdaysOnly}
-                      onChange={() => setWeekdaysOnly(false)}
-                    />{' '}
-                    <input
-                      type="number"
-                      min="1"
-                      max="999"
-                      value={dailyInterval}
-                      onChange={(e) => setDailyInterval(Number(e.target.value))}
-                      disabled={weekdaysOnly}
-                      className="recur-num"
-                    />{' '}
+                <div className="space-y-2 text-sm">
+                  <label className="flex items-center gap-2">
+                    <input type="radio" name="dailySub" checked={!weekdaysOnly} onChange={() => setWeekdaysOnly(false)} className="accent-slate-700" />
+                    <input type="number" min="1" max="999" value={dailyInterval} onChange={(e) => setDailyInterval(Number(e.target.value))} disabled={weekdaysOnly} className={numCls} />
                     日ごとに繰り返す
                   </label>
-                  <br />
-                  <label>
-                    <input
-                      type="radio"
-                      name="dailySub"
-                      checked={weekdaysOnly}
-                      onChange={() => setWeekdaysOnly(true)}
-                    />{' '}
+                  <label className="flex items-center gap-2">
+                    <input type="radio" name="dailySub" checked={weekdaysOnly} onChange={() => setWeekdaysOnly(true)} className="accent-slate-700" />
                     全ての平日
                   </label>
                 </div>
               )}
 
-              {/* 週単位 */}
               {patternType === 'weekly' && (
-                <div className="recur-sub">
-                  <label>
-                    間隔:{' '}
-                    <input
-                      type="number"
-                      min="1"
-                      max="99"
-                      value={weeklyInterval}
-                      onChange={(e) => setWeeklyInterval(Number(e.target.value))}
-                      className="recur-num"
-                    />{' '}
+                <div className="space-y-2 text-sm">
+                  <label className="flex items-center gap-2">
+                    間隔:
+                    <input type="number" min="1" max="99" value={weeklyInterval} onChange={(e) => setWeeklyInterval(Number(e.target.value))} className={numCls} />
                     週ごとに繰り返す
                   </label>
-                  <div className="recur-weekdays">
-                    <span>繰り返す曜日: </span>
+                  <div className="flex flex-wrap gap-2 mt-1">
+                    <span className="text-slate-600">繰り返す曜日:</span>
                     {DAY_LABELS.map((label, i) => (
-                      <label key={i} className="recur-day-check">
-                        <input
-                          type="checkbox"
+                      <label key={i} className="flex items-center gap-1 cursor-pointer">
+                        <Checkbox
                           checked={weekDays.includes(i)}
-                          onChange={(e) => toggleWeekDay(i, e.target.checked)}
-                        />{' '}
+                          onCheckedChange={(v) => toggleWeekDay(i, v as boolean)}
+                        />
                         {label}
                       </label>
                     ))}
@@ -439,223 +377,133 @@ const RoomReservePage: FC = () => {
                 </div>
               )}
 
-              {/* 月単位 */}
               {patternType === 'monthly' && (
-                <div className="recur-sub">
-                  <label>
-                    間隔:{' '}
-                    <input
-                      type="number"
-                      min="1"
-                      max="99"
-                      value={monthlyInterval}
-                      onChange={(e) => setMonthlyInterval(Number(e.target.value))}
-                      className="recur-num"
-                    />{' '}
+                <div className="space-y-2 text-sm">
+                  <label className="flex items-center gap-2">
+                    間隔:
+                    <input type="number" min="1" max="99" value={monthlyInterval} onChange={(e) => setMonthlyInterval(Number(e.target.value))} className={numCls} />
                     ヶ月ごとに繰り返す
                   </label>
-                  <br />
-                  <label>
-                    <input
-                      type="radio"
-                      name="monthlySub"
-                      checked={monthlySubtype === 'dayOfMonth'}
-                      onChange={() => setMonthlySubtype('dayOfMonth')}
-                    />{' '}
-                    毎月{' '}
-                    <input
-                      type="number"
-                      min="1"
-                      max="31"
-                      value={monthlyDayOfMonth}
-                      onChange={(e) => setMonthlyDayOfMonth(Number(e.target.value))}
-                      disabled={monthlySubtype !== 'dayOfMonth'}
-                      className="recur-num"
-                    />{' '}
+                  <label className="flex items-center gap-2">
+                    <input type="radio" name="monthlySub" checked={monthlySubtype === 'dayOfMonth'} onChange={() => setMonthlySubtype('dayOfMonth')} className="accent-slate-700" />
+                    毎月
+                    <input type="number" min="1" max="31" value={monthlyDayOfMonth} onChange={(e) => setMonthlyDayOfMonth(Number(e.target.value))} disabled={monthlySubtype !== 'dayOfMonth'} className={numCls} />
                     日
                   </label>
-                  <br />
-                  <label>
-                    <input
-                      type="radio"
-                      name="monthlySub"
-                      checked={monthlySubtype === 'dayOfWeek'}
-                      onChange={() => setMonthlySubtype('dayOfWeek')}
-                    />{' '}
-                    毎月{' '}
-                    <select
-                      value={monthlyWeekOfMonth}
-                      onChange={(e) => setMonthlyWeekOfMonth(Number(e.target.value))}
-                      disabled={monthlySubtype !== 'dayOfWeek'}
-                    >
-                      {WEEK_ORDINALS.map((o) => (
-                        <option key={o.value} value={o.value}>{o.label}</option>
-                      ))}
-                    </select>{' '}
-                    <select
-                      value={monthlyDayOfWeek}
-                      onChange={(e) => setMonthlyDayOfWeek(Number(e.target.value))}
-                      disabled={monthlySubtype !== 'dayOfWeek'}
-                    >
-                      {DAY_LABELS.map((label, i) => (
-                        <option key={i} value={i}>{label}曜日</option>
-                      ))}
+                  <label className="flex items-center gap-2">
+                    <input type="radio" name="monthlySub" checked={monthlySubtype === 'dayOfWeek'} onChange={() => setMonthlySubtype('dayOfWeek')} className="accent-slate-700" />
+                    毎月
+                    <select value={monthlyWeekOfMonth} onChange={(e) => setMonthlyWeekOfMonth(Number(e.target.value))} disabled={monthlySubtype !== 'dayOfWeek'} className={selectCls}>
+                      {WEEK_ORDINALS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+                    </select>
+                    <select value={monthlyDayOfWeek} onChange={(e) => setMonthlyDayOfWeek(Number(e.target.value))} disabled={monthlySubtype !== 'dayOfWeek'} className={selectCls}>
+                      {DAY_LABELS.map((label, i) => <option key={i} value={i}>{label}曜日</option>)}
                     </select>
                   </label>
                 </div>
               )}
 
-              {/* 年単位 */}
               {patternType === 'yearly' && (
-                <div className="recur-sub">
-                  <label>
-                    間隔:{' '}
-                    <input
-                      type="number"
-                      min="1"
-                      max="99"
-                      value={yearlyInterval}
-                      onChange={(e) => setYearlyInterval(Number(e.target.value))}
-                      className="recur-num"
-                    />{' '}
+                <div className="space-y-2 text-sm">
+                  <label className="flex items-center gap-2">
+                    間隔:
+                    <input type="number" min="1" max="99" value={yearlyInterval} onChange={(e) => setYearlyInterval(Number(e.target.value))} className={numCls} />
                     年ごとに繰り返す
                   </label>
-                  <br />
-                  <label>
-                    <input
-                      type="radio"
-                      name="yearlySub"
-                      checked={yearlySubtype === 'dayOfMonth'}
-                      onChange={() => setYearlySubtype('dayOfMonth')}
-                    />{' '}
-                    <select
-                      value={yearlyMonth}
-                      onChange={(e) => setYearlyMonth(Number(e.target.value))}
-                      disabled={yearlySubtype !== 'dayOfMonth'}
-                    >
-                      {MONTH_LABELS.map((label, i) => (
-                        <option key={i + 1} value={i + 1}>{label}</option>
-                      ))}
-                    </select>{' '}
-                    <input
-                      type="number"
-                      min="1"
-                      max="31"
-                      value={yearlyDayOfMonth}
-                      onChange={(e) => setYearlyDayOfMonth(Number(e.target.value))}
-                      disabled={yearlySubtype !== 'dayOfMonth'}
-                      className="recur-num"
-                    />{' '}
+                  <label className="flex items-center gap-2">
+                    <input type="radio" name="yearlySub" checked={yearlySubtype === 'dayOfMonth'} onChange={() => setYearlySubtype('dayOfMonth')} className="accent-slate-700" />
+                    <select value={yearlyMonth} onChange={(e) => setYearlyMonth(Number(e.target.value))} disabled={yearlySubtype !== 'dayOfMonth'} className={selectCls}>
+                      {MONTH_LABELS.map((label, i) => <option key={i + 1} value={i + 1}>{label}</option>)}
+                    </select>
+                    <input type="number" min="1" max="31" value={yearlyDayOfMonth} onChange={(e) => setYearlyDayOfMonth(Number(e.target.value))} disabled={yearlySubtype !== 'dayOfMonth'} className={numCls} />
                     日
                   </label>
-                  <br />
-                  <label>
-                    <input
-                      type="radio"
-                      name="yearlySub"
-                      checked={yearlySubtype === 'dayOfWeek'}
-                      onChange={() => setYearlySubtype('dayOfWeek')}
-                    />{' '}
-                    <select
-                      value={yearlyMonth}
-                      onChange={(e) => setYearlyMonth(Number(e.target.value))}
-                      disabled={yearlySubtype !== 'dayOfWeek'}
-                    >
-                      {MONTH_LABELS.map((label, i) => (
-                        <option key={i + 1} value={i + 1}>{label}</option>
-                      ))}
-                    </select>{' '}
-                    <select
-                      value={yearlyWeekOfMonth}
-                      onChange={(e) => setYearlyWeekOfMonth(Number(e.target.value))}
-                      disabled={yearlySubtype !== 'dayOfWeek'}
-                    >
-                      {WEEK_ORDINALS.map((o) => (
-                        <option key={o.value} value={o.value}>{o.label}</option>
-                      ))}
-                    </select>{' '}
-                    <select
-                      value={yearlyDayOfWeek}
-                      onChange={(e) => setYearlyDayOfWeek(Number(e.target.value))}
-                      disabled={yearlySubtype !== 'dayOfWeek'}
-                    >
-                      {DAY_LABELS.map((label, i) => (
-                        <option key={i} value={i}>{label}曜日</option>
-                      ))}
+                  <label className="flex items-center gap-2">
+                    <input type="radio" name="yearlySub" checked={yearlySubtype === 'dayOfWeek'} onChange={() => setYearlySubtype('dayOfWeek')} className="accent-slate-700" />
+                    <select value={yearlyMonth} onChange={(e) => setYearlyMonth(Number(e.target.value))} disabled={yearlySubtype !== 'dayOfWeek'} className={selectCls}>
+                      {MONTH_LABELS.map((label, i) => <option key={i + 1} value={i + 1}>{label}</option>)}
+                    </select>
+                    <select value={yearlyWeekOfMonth} onChange={(e) => setYearlyWeekOfMonth(Number(e.target.value))} disabled={yearlySubtype !== 'dayOfWeek'} className={selectCls}>
+                      {WEEK_ORDINALS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+                    </select>
+                    <select value={yearlyDayOfWeek} onChange={(e) => setYearlyDayOfWeek(Number(e.target.value))} disabled={yearlySubtype !== 'dayOfWeek'} className={selectCls}>
+                      {DAY_LABELS.map((label, i) => <option key={i} value={i}>{label}曜日</option>)}
                     </select>
                   </label>
                 </div>
               )}
             </fieldset>
 
-            {/* 期間の設定 */}
-            <fieldset className="recur-fieldset">
-              <legend>期間の設定</legend>
-              <div className="recur-sub">
-                <div>
-                  開始日: <strong>{date || '（日付を選択してください）'}</strong>
-                </div>
-                <div style={{ marginTop: '8px' }}>
-                  <label>
-                    <input
-                      type="radio"
-                      name="endType"
-                      value="endDate"
-                      checked={endType === 'endDate'}
-                      onChange={() => setEndType('endDate')}
-                    />{' '}
-                    終了日:{' '}
-                    <input
-                      type="date"
-                      value={recurEndDate}
-                      onChange={(e) => setRecurEndDate(e.target.value)}
-                      disabled={endType !== 'endDate'}
-                      min={date}
-                    />
-                  </label>
-                </div>
-                <div style={{ marginTop: '4px' }}>
-                  <label>
-                    <input
-                      type="radio"
-                      name="endType"
-                      value="count"
-                      checked={endType === 'count'}
-                      onChange={() => setEndType('count')}
-                    />{' '}
-                    <input
-                      type="number"
-                      min="1"
-                      max="365"
-                      value={recurCount}
-                      onChange={(e) => setRecurCount(Number(e.target.value))}
-                      disabled={endType !== 'count'}
-                      className="recur-num"
-                    />{' '}
-                    回後に終了
-                  </label>
-                </div>
-                <div style={{ marginTop: '4px' }}>
-                  <label>
-                    <input
-                      type="radio"
-                      name="endType"
-                      value="noEnd"
-                      checked={endType === 'noEnd'}
-                      onChange={() => setEndType('noEnd')}
-                    />{' '}
-                    終了日未定
-                  </label>
-                </div>
+            {/* 期間設定 */}
+            <fieldset className="border border-slate-300 rounded p-3">
+              <legend className="text-xs font-semibold px-1 text-slate-600">期間の設定</legend>
+              <div className="space-y-2 text-sm">
+                <p>開始日: <strong>{startDate || '（日付を選択してください）'}</strong></p>
+                <label className="flex items-center gap-2">
+                  <input type="radio" name="endType" value="endDate" checked={endType === 'endDate'} onChange={() => setEndType('endDate')} className="accent-slate-700" />
+                  終了日:
+                  <Input type="date" value={recurEndDate} onChange={(e) => setRecurEndDate(e.target.value)} disabled={endType !== 'endDate'} min={startDate} className="w-auto" />
+                </label>
+                <label className="flex items-center gap-2">
+                  <input type="radio" name="endType" value="count" checked={endType === 'count'} onChange={() => setEndType('count')} className="accent-slate-700" />
+                  <input type="number" min="1" max="365" value={recurCount} onChange={(e) => setRecurCount(Number(e.target.value))} disabled={endType !== 'count'} className={numCls} />
+                  回後に終了
+                </label>
+                <label className="flex items-center gap-2">
+                  <input type="radio" name="endType" value="noEnd" checked={endType === 'noEnd'} onChange={() => setEndType('noEnd')} className="accent-slate-700" />
+                  終了日未定
+                </label>
               </div>
             </fieldset>
           </div>
         )}
 
-        <p className="form-hint">※ すべての項目が必須です。</p>
-        <div className="form-actions">
-          <input type="submit" value={isRecurring ? '繰り返し予約する' : '予約する'} />
-          <Link to="/rooms">キャンセル</Link>
+        <div className="grid grid-cols-[160px_1fr] items-start gap-x-4 gap-y-4">
+          <Label className="pt-1.5">
+            人数 <span className="text-destructive font-bold">*</span>
+          </Label>
+          <div className="flex items-center gap-2">
+            <Input
+              type="number"
+              min="1"
+              max={room.capacity}
+              value={attendeeCount}
+              onChange={(e) => setAttendeeCount(e.target.value)}
+              className="w-24"
+            />
+            <span className="text-xs text-muted-foreground">（定員: {room.capacity}名）</span>
+          </div>
+
+          <Label className="pt-1.5">
+            会議名 <span className="text-destructive font-bold">*</span>
+          </Label>
+          <Input
+            type="text"
+            value={meetingName}
+            onChange={(e) => setMeetingName(e.target.value)}
+          />
+
+          <Label className="pt-1.5">
+            予約者名 <span className="text-destructive font-bold">*</span>
+          </Label>
+          <Input type="text" value={reservedBy} readOnly className="bg-muted" />
+
+          <Label className="pt-1.5">
+            参加者 <span className="text-xs text-muted-foreground">（任意）</span>
+          </Label>
+          <Textarea
+            value={participants}
+            onChange={(e) => setParticipants(e.target.value)}
+            rows={3}
+          />
+        </div>
+
+        <p className="text-xs text-muted-foreground">※ 参加者以外の項目は必須です。</p>
+        <div className="flex items-center gap-3">
+          <Button type="submit">{isRecurring ? '繰り返し予約する' : '予約する'}</Button>
+          <Link to="/rooms" className={cn(buttonVariants({ variant: 'outline' }))}>
+            キャンセル
+          </Link>
         </div>
       </form>
     </div>

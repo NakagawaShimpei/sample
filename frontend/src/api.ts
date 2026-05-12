@@ -59,7 +59,7 @@ export const api = {
     > &
       RecurringOptions,
   ) =>
-    request<{ created: Reservation[]; skipped: number }>(
+    request<{ created: Reservation[]; skippedDates: string[] }>(
       '/reservations/recurring',
       { method: 'POST', body: JSON.stringify(payload) },
     ),

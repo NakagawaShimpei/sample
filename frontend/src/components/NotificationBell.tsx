@@ -1,4 +1,7 @@
 import { FC, useEffect, useRef, useState } from 'react';
+import { BellIcon } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { useAuth } from '../contexts/AuthContext';
 import { useData } from '../contexts/DataContext';
 import { formatElapsed, getLoanAlertInfo } from '../utils/loanAlerts';
@@ -38,56 +41,43 @@ const NotificationBell: FC = () => {
   const username = currentUser?.username ?? '';
   const isAdmin = currentUser?.role === 'admin';
 
-  // Load from localStorage on mount / user change
   useEffect(() => {
     if (username) setNotifications(load(username));
   }, [username]);
 
-  // Generate / sync notifications based on loan alert state
   useEffect(() => {
     if (!username) return;
-
     const now = new Date();
-    const relevantLoans = isAdmin
-      ? loans
-      : loans.filter((l) => l.borrowedBy === username);
-
+    const relevantLoans = isAdmin ? loans : loans.filter((l) => l.borrowedBy === username);
     const existingLoanIds = new Set(loans.map((l) => l.id));
 
     setNotifications((prev) => {
-      // Remove notifications for loans that no longer exist
       const pruned = prev.filter((n) => {
         const loanId = n.loanKey.split('-alert-')[0];
         return existingLoanIds.has(loanId);
       });
-
       const existingKeys = new Set(pruned.map((n) => n.loanKey));
       const toAdd: AppNotification[] = [];
 
       for (const loan of relevantLoans) {
         const info = getLoanAlertInfo(loan, now);
         if (info.status === 'normal') continue;
-
         const loanKey = `${loan.id}-alert-${info.status}`;
         if (existingKeys.has(loanKey)) continue;
 
         const device = devices.find((d) => d.id === loan.deviceId);
         const deviceName = device?.name ?? '(不明なデバイス)';
-
         let message = '';
         let severity: AppNotification['severity'] = 'info';
 
         if (info.status === 'overdue') {
-          const overdueStr = formatElapsed(info.overdueHours ?? 0);
-          message = `【延滞】${deviceName} の返却期限を ${overdueStr} 超過しています。`;
+          message = `【延滞】${deviceName} の返却期限を ${formatElapsed(info.overdueHours ?? 0)} 超過しています。`;
           severity = 'error';
         } else if (info.status === 'warning') {
-          const minStr = `${info.minutesRemaining ?? 0}分`;
-          message = `【まもなく期限】${deviceName} の返却期限まで残り ${minStr} です。`;
+          message = `【まもなく期限】${deviceName} の返却期限まで残り ${info.minutesRemaining ?? 0}分 です。`;
           severity = 'warning';
         } else if (info.status === 'longDuration') {
-          const elapsed = formatElapsed(info.hoursElapsed);
-          message = `【長時間貸出】${deviceName} を ${elapsed} 借り続けています（借用者: ${loan.borrowedBy}）。`;
+          message = `【長時間貸出】${deviceName} を ${formatElapsed(info.hoursElapsed)} 借り続けています（借用者: ${loan.borrowedBy}）。`;
           severity = 'warning';
         }
 
@@ -107,7 +97,6 @@ const NotificationBell: FC = () => {
     });
   }, [loans, devices, username, isAdmin]);
 
-  // Close dropdown on outside click
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {
@@ -142,55 +131,67 @@ const NotificationBell: FC = () => {
   };
 
   return (
-    <div className="notif-wrapper" ref={wrapperRef}>
-      <button
+    <div className="relative" ref={wrapperRef}>
+      <Button
         type="button"
-        className="notif-bell-btn"
+        variant="ghost"
+        size="icon-sm"
+        className="relative text-white hover:text-white hover:bg-white/20"
         onClick={() => setOpen((o) => !o)}
         aria-label={`通知 (${unreadCount}件未読)`}
         title="通知"
       >
-        <svg
-          width="20"
-          height="20"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          aria-hidden="true"
-        >
-          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-          <path d="M13.73 21a2 2 0 0 1-3.46 0" />
-        </svg>
+        <BellIcon className="size-[18px]" aria-hidden="true" />
         {unreadCount > 0 && (
-          <span className="notif-badge">{unreadCount > 99 ? '99+' : unreadCount}</span>
+          <Badge
+            variant="destructive"
+            className="absolute -top-1 -right-1 h-4 min-w-4 px-0.5 text-[9px] flex items-center justify-center rounded-full"
+          >
+            {unreadCount > 99 ? '99+' : unreadCount}
+          </Badge>
         )}
-      </button>
+      </Button>
 
       {open && (
-        <div className="notif-dropdown">
-          <div className="notif-dropdown-header">
-            <span>通知</span>
+        <div className="absolute top-full right-0 mt-1.5 w-80 bg-white border border-slate-200 rounded-lg shadow-lg z-50 text-slate-900">
+          <div className="flex justify-between items-center px-3 py-2 bg-slate-100 rounded-t-lg border-b border-slate-200">
+            <span className="text-sm font-medium">通知</span>
             {unreadCount > 0 && (
-              <button type="button" className="notif-read-all-btn" onClick={markAllRead}>
+              <Button
+                type="button"
+                variant="outline"
+                size="xs"
+                onClick={markAllRead}
+              >
                 全て既読にする
-              </button>
+              </Button>
             )}
           </div>
-          <ul className="notif-list">
+          <ul className="list-none m-0 p-0 max-h-72 overflow-y-auto">
             {notifications.length === 0 ? (
-              <li className="notif-empty">通知はありません</li>
+              <li className="px-3 py-4 text-center text-sm text-slate-400">通知はありません</li>
             ) : (
               [...notifications].reverse().map((n) => (
                 <li
                   key={n.id}
-                  className={`notif-item notif-item--${n.severity}${n.read ? '' : ' notif-item--unread'}`}
+                  className={[
+                    'px-3 py-2 border-b border-slate-100 cursor-pointer text-xs hover:bg-slate-50',
+                    n.read ? '' : 'bg-yellow-50 hover:bg-yellow-100',
+                  ].join(' ')}
                   onClick={() => markRead(n.id)}
                 >
-                  <span className="notif-msg">{n.message}</span>
-                  <span className="notif-time">{formatTime(n.createdAt)}</span>
+                  <span
+                    className={[
+                      'block leading-relaxed',
+                      n.severity === 'error' ? 'before:content-["●_"] before:text-red-600' : '',
+                      n.severity === 'warning' ? 'before:content-["●_"] before:text-amber-600' : '',
+                    ].join(' ')}
+                  >
+                    {n.message}
+                  </span>
+                  <span className="block text-[10px] text-slate-400 mt-0.5">
+                    {formatTime(n.createdAt)}
+                  </span>
                 </li>
               ))
             )}

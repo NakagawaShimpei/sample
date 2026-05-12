@@ -17,6 +17,26 @@ const loanService = {
   },
 
   async create(data: Omit<Loan, 'id'>): Promise<Loan> {
+    const device = deviceRepository.findById(data.deviceId);
+    if (!device) {
+      throw Object.assign(new Error('指定のデバイスが存在しません'), { status: 400 });
+    }
+    if (device.status !== 'available') {
+      throw Object.assign(new Error('このデバイスは現在貸出できません'), { status: 409 });
+    }
+    const existing = loanRepository.findAll();
+    if (existing.some((l) => l.deviceId === data.deviceId)) {
+      throw Object.assign(new Error('このデバイスはすでに貸出中です'), { status: 409 });
+    }
+    if (data.expectedReturnAt) {
+      const ret = new Date(data.expectedReturnAt);
+      if (isNaN(ret.getTime())) {
+        throw Object.assign(new Error('返却予定日時の形式が正しくありません'), { status: 400 });
+      }
+      if (ret <= new Date()) {
+        throw Object.assign(new Error('返却予定日時は現在時刻より後にしてください'), { status: 400 });
+      }
+    }
     return loanRepository.create(data);
   },
 
