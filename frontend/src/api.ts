@@ -108,4 +108,10 @@ export const api = {
   listReservationHistory: () =>
     request<ReservationHistory[]>('/reservationHistory'),
   listLoanHistory: () => request<LoanHistory[]>('/loanHistory'),
+
+  chat: (messages: { role: 'user' | 'assistant'; content: string }[]) =>
+    request<{ reply: string; messages: { role: 'user' | 'assistant'; content: string }[] }>('/chat', {
+      method: 'POST',
+      body: JSON.stringify({ messages }),
+    }),
 };

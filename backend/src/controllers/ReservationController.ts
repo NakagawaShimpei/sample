@@ -19,8 +19,12 @@ function validateReservationBase(data: Omit<Reservation, 'id'>): string | null {
   if (!DATE_RE.test(date)) return '日付の形式が正しくありません (YYYY-MM-DD)';
   if (!TIME_RE.test(startTime) || !TIME_RE.test(endTime)) return '時刻の形式が正しくありません (HH:MM)';
 
-  const today = new Date().toISOString().slice(0, 10);
+  const now = new Date();
+  const today = now.toISOString().slice(0, 10);
   if (date < today) return '過去の日付には予約できません';
+  if (date === today && toMins(startTime) <= now.getHours() * 60 + now.getMinutes()) {
+    return '開始時刻がすでに過去です';
+  }
 
   if (toMins(endTime) <= toMins(startTime)) return '終了時刻は開始時刻より後にしてください';
 

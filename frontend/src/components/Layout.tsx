@@ -19,6 +19,7 @@ import { cn } from '@/lib/utils';
 import { useAuth } from '../contexts/AuthContext';
 import { useData } from '../contexts/DataContext';
 import { getLoanAlertInfo } from '../utils/loanAlerts';
+import ChatPanel from './ChatPanel';
 import NotificationBell from './NotificationBell';
 
 interface NavItemProps {
@@ -192,6 +193,7 @@ const Layout: FC = () => {
           <Outlet />
         </main>
       </div>
+      <ChatPanel />
     </div>
   );
 };

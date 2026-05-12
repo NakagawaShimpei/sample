@@ -1,5 +1,7 @@
+import bcrypt from 'bcrypt';
 import { Request, Response } from 'express';
 import { config } from '../config';
+import { userRepository } from '../repositories/UserRepository';
 import authService, { TokenPayload } from '../services/AuthService';
 
 const authController = {
@@ -52,6 +54,31 @@ const authController = {
   me(req: Request, res: Response): void {
     const { username, role, displayName } = req.user!;
     res.json({ username, role, displayName });
+  },
+
+  async changePassword(req: Request, res: Response): Promise<void> {
+    const { currentPassword, newPassword } = req.body as {
+      currentPassword: string;
+      newPassword: string;
+    };
+    if (!currentPassword || !newPassword) {
+      res.status(400).json({ error: '現在のパスワードと新しいパスワードは必須です' });
+      return;
+    }
+    if (newPassword.length < 8) {
+      res.status(400).json({ error: '新しいパスワードは8文字以上にしてください' });
+      return;
+    }
+
+    const user = userRepository.findById(req.user!.userId);
+    if (!user) { res.status(404).json({ error: 'ユーザーが見つかりません' }); return; }
+
+    const match = await bcrypt.compare(currentPassword, user.password);
+    if (!match) { res.status(400).json({ error: '現在のパスワードが正しくありません' }); return; }
+
+    const hashed = await bcrypt.hash(newPassword, 10);
+    await userRepository.update(user.id, { password: hashed });
+    res.json({ message: 'パスワードを変更しました' });
   },
 };
 

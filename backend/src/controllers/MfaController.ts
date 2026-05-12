@@ -6,6 +6,12 @@ import mfaService from '../services/MfaService';
 import { UserRecord } from '../types';
 
 const mfaController = {
+  // GET /api/mfa/status — returns whether MFA is currently enabled for the authenticated user
+  status(req: Request, res: Response): void {
+    const user = userRepository.findById(req.user!.userId);
+    res.json({ enabled: !!user?.totpSecret });
+  },
+
   // GET /api/mfa/setup — generates a new TOTP secret for the authenticated user (not saved yet)
   async setup(req: Request, res: Response): Promise<void> {
     const username = req.user!.username;
