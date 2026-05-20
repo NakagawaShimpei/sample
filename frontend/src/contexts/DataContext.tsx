@@ -15,6 +15,7 @@ interface NewUser {
   username: string;
   password: string;
   displayName: string;
+  email?: string;
 }
 
 interface DataContextValue {
@@ -173,7 +174,6 @@ export function DataProvider({ children }: { children: ReactNode }) {
   };
 
   const borrowDevice = async (deviceId: string, borrowedBy: string, expectedReturnAt?: string) => {
-    const updated = await api.updateDeviceStatus(deviceId, 'inUse');
     const loanData: Omit<Loan, 'id'> = {
       deviceId,
       borrowedBy,
@@ -181,7 +181,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
     };
     if (expectedReturnAt) loanData.expectedReturnAt = expectedReturnAt;
     const loan = await api.createLoan(loanData);
-    setDevices((prev) => prev.map((d) => (d.id === deviceId ? updated : d)));
+    setDevices((prev) => prev.map((d) => (d.id === deviceId ? { ...d, status: 'inUse' as const } : d)));
     setLoans((prev) => [...prev, loan]);
   };
 

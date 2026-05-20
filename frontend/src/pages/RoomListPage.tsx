@@ -14,6 +14,7 @@ import {
 import SortableHead from '../components/SortableHead';
 import { useAuth } from '../contexts/AuthContext';
 import { useData } from '../contexts/DataContext';
+import { useDialog } from '../contexts/DialogContext';
 import { useSortFilter } from '../hooks/useSortFilter';
 import { Room } from '../types';
 
@@ -51,12 +52,15 @@ const RoomListPage: FC = () => {
       },
     );
 
+  const dialog = useDialog();
+
   const handleDelete = async (id: string, name: string) => {
-    if (!window.confirm(`会議室「${name}」を削除します。よろしいですか？`)) return;
+    const ok = await dialog.confirm(`会議室「${name}」を削除します。よろしいですか？`, { title: '削除の確認', confirmLabel: '削除', variant: 'destructive' });
+    if (!ok) return;
     try {
       await deleteRoom(id);
     } catch (e) {
-      alert('削除に失敗しました: ' + (e instanceof Error ? e.message : ''));
+      await dialog.alert('削除に失敗しました: ' + (e instanceof Error ? e.message : ''), 'エラー', 'error');
     }
   };
 

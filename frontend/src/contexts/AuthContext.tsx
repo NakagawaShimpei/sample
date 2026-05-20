@@ -7,6 +7,7 @@ import {
   useRef,
   useState,
 } from 'react';
+import { api } from '../api';
 import { User } from '../types';
 
 // 無操作タイムアウト: 30分（サーバー側 INACTIVITY_TIMEOUT_MS と合わせること）
@@ -25,6 +26,7 @@ interface AuthContextValue {
   login: (username: string, password: string) => Promise<LoginResult>;
   mfaVerify: (mfaToken: string, code: string) => Promise<boolean>;
   logout: () => Promise<void>;
+  updateEmail: (email: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -116,9 +118,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const updateEmail = async (email: string): Promise<void> => {
+    const result = await api.updateEmail(email);
+    setCurrentUser((prev) => prev ? { ...prev, email: result.email } : prev);
+  };
+
   return (
     <AuthContext.Provider
-      value={{ currentUser, isLoading, login, mfaVerify, logout }}
+      value={{ currentUser, isLoading, login, mfaVerify, logout, updateEmail }}
     >
       {children}
     </AuthContext.Provider>

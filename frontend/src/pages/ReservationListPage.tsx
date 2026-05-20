@@ -20,6 +20,7 @@ import {
 import SortableHead from '../components/SortableHead';
 import { useAuth } from '../contexts/AuthContext';
 import { useData } from '../contexts/DataContext';
+import { useDialog } from '../contexts/DialogContext';
 import { useSortFilter } from '../hooks/useSortFilter';
 import { Reservation } from '../types';
 
@@ -41,6 +42,7 @@ const ReservationListPage: FC = () => {
 
   const { currentUser } = useAuth();
   const isAdmin = currentUser?.role === 'admin';
+  const dialog = useDialog();
   const [cancelTarget, setCancelTarget] = useState<Reservation | null>(null);
 
   const visible = isAdmin
@@ -78,14 +80,17 @@ const ReservationListPage: FC = () => {
         return a.startTime.localeCompare(b.startTime);
       });
 
-  const handleCancelClick = (r: Reservation) => {
+  const handleCancelClick = async (r: Reservation) => {
     if (r.recurringGroupId) {
       setCancelTarget(r);
     } else {
-      if (!window.confirm(`予約「${r.meetingName}」をキャンセルします。よろしいですか？`)) return;
-      cancelReservation(r.id).catch((e) =>
-        alert('キャンセルに失敗しました: ' + (e instanceof Error ? e.message : '')),
-      );
+      const ok = await dialog.confirm(`予約「${r.meetingName}」をキャンセルします。よろしいですか？`, { title: 'キャンセルの確認', confirmLabel: 'キャンセルする', variant: 'destructive' });
+      if (!ok) return;
+      try {
+        await cancelReservation(r.id);
+      } catch (e) {
+        await dialog.alert('キャンセルに失敗しました: ' + (e instanceof Error ? e.message : ''), 'エラー', 'error');
+      }
     }
   };
 
@@ -95,7 +100,7 @@ const ReservationListPage: FC = () => {
     try {
       await cancelReservation(cancelTarget.id);
     } catch (e) {
-      alert('キャンセルに失敗しました: ' + (e instanceof Error ? e.message : ''));
+      await dialog.alert('キャンセルに失敗しました: ' + (e instanceof Error ? e.message : ''), 'エラー', 'error');
     }
   };
 
@@ -105,7 +110,7 @@ const ReservationListPage: FC = () => {
     try {
       await cancelReservationGroup(cancelTarget.recurringGroupId);
     } catch (e) {
-      alert('キャンセルに失敗しました: ' + (e instanceof Error ? e.message : ''));
+      await dialog.alert('キャンセルに失敗しました: ' + (e instanceof Error ? e.message : ''), 'エラー', 'error');
     }
   };
 

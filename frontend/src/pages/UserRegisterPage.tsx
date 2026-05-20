@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useData } from '../contexts/DataContext';
+import { useDialog } from '../contexts/DialogContext';
 
 const UserRegisterPage: FC = () => {
   const { addUser } = useData();
@@ -12,19 +13,22 @@ const UserRegisterPage: FC = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [displayName, setDisplayName] = useState('');
+  const [email, setEmail] = useState('');
+
+  const dialog = useDialog();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!username || !password || !displayName) {
-      alert('すべての項目を入力してください。');
+      await dialog.alert('ユーザー名・パスワード・表示名は必須です。', '入力エラー', 'warning');
       return;
     }
     try {
-      await addUser({ username, password, displayName });
-      alert('登録しました。');
+      await addUser({ username, password, displayName, email: email || undefined });
+      await dialog.alert('ユーザーを登録しました。', '完了', 'success');
       navigate('/users');
     } catch (err) {
-      alert('登録に失敗しました: ' + (err instanceof Error ? err.message : ''));
+      await dialog.alert('登録に失敗しました: ' + (err instanceof Error ? err.message : ''), 'エラー', 'error');
     }
   };
 
@@ -67,9 +71,18 @@ const UserRegisterPage: FC = () => {
             value={displayName}
             onChange={(e) => setDisplayName(e.target.value)}
           />
+
+          <Label htmlFor="email">メールアドレス</Label>
+          <Input
+            id="email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="パスワード再設定に使用します"
+          />
         </div>
 
-        <p className="text-xs text-muted-foreground">※ すべての項目が必須です。</p>
+        <p className="text-xs text-muted-foreground">※ <span className="text-destructive font-bold">*</span> は必須です。メールアドレスはパスワード再設定に使用します。</p>
         <Button type="submit">登録する</Button>
       </form>
     </div>

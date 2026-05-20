@@ -89,6 +89,7 @@ export const api = {
     username: string;
     password: string;
     displayName: string;
+    email?: string;
   }) =>
     request<UserRecord>('/users', {
       method: 'POST',
@@ -96,6 +97,21 @@ export const api = {
     }),
   deleteUser: (id: string) =>
     request<void>(`/users/${id}`, { method: 'DELETE' }),
+  updateEmail: (email: string) =>
+    request<{ email: string | null }>('/auth/email', {
+      method: 'PUT',
+      body: JSON.stringify({ email }),
+    }),
+  forgotPassword: (email: string) =>
+    request<{ message: string }>('/auth/forgot-password', {
+      method: 'POST',
+      body: JSON.stringify({ email }),
+    }),
+  resetPassword: (token: string, newPassword: string) =>
+    request<{ message: string }>('/auth/reset-password', {
+      method: 'POST',
+      body: JSON.stringify({ token, newPassword }),
+    }),
 
   listLoans: () => request<Loan[]>('/loans'),
   createLoan: (loan: Omit<Loan, 'id'>) =>

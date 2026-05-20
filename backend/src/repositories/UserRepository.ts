@@ -10,6 +10,10 @@ class UserRepository extends SqliteRepository<UserRecord> {
     return this.findWhere((u) => u.username === username)[0];
   }
 
+  findByEmail(email: string): UserRecord | undefined {
+    return this.findWhere((u) => u.email === email)[0];
+  }
+
   removeTotpSecret(id: string): Promise<void> {
     return this.update(id, {
       totpSecret: undefined,

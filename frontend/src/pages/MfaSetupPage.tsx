@@ -3,10 +3,14 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
+import { useAuth } from '../contexts/AuthContext';
+import { useDialog } from '../contexts/DialogContext';
 
 type SetupState = 'loading' | 'enabled' | 'disabled' | 'setting_up' | 'verifying' | 'done' | 'error';
 
 const MfaSetupPage: FC = () => {
+  const { currentUser, updateEmail } = useAuth();
+  const dialog = useDialog();
   const [state, setState] = useState<SetupState>('loading');
   const [qrCode, setQrCode] = useState('');
   const [secret, setSecret] = useState('');
@@ -18,6 +22,14 @@ const MfaSetupPage: FC = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [pwMessage, setPwMessage] = useState<{ text: string; ok: boolean } | null>(null);
   const [pwSubmitting, setPwSubmitting] = useState(false);
+
+  const [email, setEmail] = useState(currentUser?.email ?? '');
+  const [emailMessage, setEmailMessage] = useState<{ text: string; ok: boolean } | null>(null);
+  const [emailSubmitting, setEmailSubmitting] = useState(false);
+
+  useEffect(() => {
+    setEmail(currentUser?.email ?? '');
+  }, [currentUser?.email]);
 
   useEffect(() => {
     fetch('/api/mfa/status', { credentials: 'include' })
@@ -69,7 +81,8 @@ const MfaSetupPage: FC = () => {
   };
 
   const handleDisable = async () => {
-    if (!window.confirm('MFA を無効にしますか？')) return;
+    const ok = await dialog.confirm('MFA を無効にしますか？', { title: 'MFA無効化の確認', confirmLabel: '無効にする', variant: 'destructive' });
+    if (!ok) return;
     try {
       const res = await fetch('/api/mfa/disable', { method: 'DELETE', credentials: 'include' });
       if (!res.ok) throw new Error('failed');
@@ -232,6 +245,51 @@ const MfaSetupPage: FC = () => {
           disabled={pwSubmitting || !currentPassword || !newPassword || !confirmPassword}
         >
           {pwSubmitting ? '変更中...' : 'パスワードを変更する'}
+        </Button>
+      </form>
+
+      <Separator className="my-6" />
+
+      <h2 className="text-base font-semibold border-l-4 border-slate-700 pl-2 mt-0 mb-4">
+        メールアドレス
+      </h2>
+      <p className="text-sm text-muted-foreground mb-3">
+        パスワード再設定メールの送信先として使用されます。
+      </p>
+      <form
+        onSubmit={async (e) => {
+          e.preventDefault();
+          setEmailMessage(null);
+          setEmailSubmitting(true);
+          try {
+            await updateEmail(email);
+            setEmailMessage({ text: 'メールアドレスを更新しました', ok: true });
+          } catch {
+            setEmailMessage({ text: '更新に失敗しました', ok: false });
+          } finally {
+            setEmailSubmitting(false);
+          }
+        }}
+        className="space-y-3"
+      >
+        <div className="space-y-1">
+          <Label htmlFor="email">メールアドレス</Label>
+          <Input
+            id="email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="example@gmail.com"
+            autoComplete="email"
+          />
+        </div>
+        {emailMessage && (
+          <p className={`text-sm ${emailMessage.ok ? 'text-green-600' : 'text-destructive'}`}>
+            {emailMessage.text}
+          </p>
+        )}
+        <Button type="submit" disabled={emailSubmitting}>
+          {emailSubmitting ? '更新中...' : 'メールアドレスを更新する'}
         </Button>
       </form>
     </div>

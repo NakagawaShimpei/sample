@@ -20,4 +20,12 @@ export const config = {
     maxAge: 24 * 60 * 60 * 1000,
     path: '/',
   },
+  SMTP: {
+    host: process.env.SMTP_HOST || 'smtp.gmail.com',
+    port: Number(process.env.SMTP_PORT) || 587,
+    user: process.env.SMTP_USER || '',
+    pass: process.env.SMTP_PASS || '',
+    from: process.env.SMTP_FROM || process.env.SMTP_USER || '',
+  },
+  FRONTEND_URL: process.env.FRONTEND_URL || 'http://localhost:3000',
 };

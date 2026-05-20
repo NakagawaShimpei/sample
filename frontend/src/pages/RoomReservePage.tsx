@@ -1,4 +1,5 @@
-import { FC, FormEvent, useEffect, useRef, useState } from 'react';
+import { FC, FormEvent, useEffect, useMemo, useRef, useState } from 'react';
+import { AlertTriangle } from 'lucide-react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -8,6 +9,8 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useAuth } from '../contexts/AuthContext';
 import { useData } from '../contexts/DataContext';
+import { useDialog } from '../contexts/DialogContext';
+import DayTimeline from '../components/DayTimeline';
 import { RecurringOptions, RecurringPatternType } from '../types';
 
 const timeToMins = (t: string): number => {
@@ -22,6 +25,12 @@ const minsToTime = (mins: number): string => {
   const m = wrapped % 60;
   return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
 };
+
+const toLocalDateStr = (d: Date = new Date()): string =>
+  `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+
+const toLocalTimeStr = (d: Date = new Date()): string =>
+  `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
 
 const roundUpTo10Min = (): string => {
   const now = new Date();
@@ -75,20 +84,24 @@ const numCls = 'h-8 w-16 rounded-lg border border-input bg-transparent px-2 py-1
 
 const RoomReservePage: FC = () => {
   const { roomId } = useParams<{ roomId: string }>();
-  const { rooms, addReservation, addRecurringReservation, reloadRooms } = useData();
+  const { rooms, reservations, addReservation, addRecurringReservation, reloadRooms, reloadReservations } = useData();
   const { currentUser } = useAuth();
   const navigate = useNavigate();
+  const dialog = useDialog();
 
   useEffect(() => {
     reloadRooms();
+    reloadReservations();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const roomReservations = reservations.filter((r) => r.roomId === roomId);
+
   const room = rooms.find((r) => r.id === roomId);
 
-  const [startDate, setStartDate] = useState(() => new Date().toISOString().slice(0, 10));
+  const [startDate, setStartDate] = useState(toLocalDateStr);
   const [startTime, setStartTime] = useState(roundUpTo10Min);
-  const [endDate, setEndDate] = useState(() => new Date().toISOString().slice(0, 10));
+  const [endDate, setEndDate] = useState(toLocalDateStr);
   const [endTime, setEndTime] = useState(() => nextHalfHourAfter(timeToMins(roundUpTo10Min())));
   const [isAllDay, setIsAllDay] = useState(false);
   const [attendeeCount, setAttendeeCount] = useState('');
@@ -122,6 +135,22 @@ const RoomReservePage: FC = () => {
   const [recurEndDate, setRecurEndDate] = useState('');
   const [recurCount, setRecurCount] = useState(10);
 
+  const conflictingIds = useMemo(() => {
+    const ids = new Set<string>();
+    if (!startDate) return ids;
+    const selStart = isAllDay ? 0 : timeToMins(startTime);
+    const selEnd = isAllDay ? 1439 : timeToMins(endTime);
+    if (!isAllDay && selEnd <= selStart) return ids;
+    roomReservations.forEach((r) => {
+      if (r.date !== startDate) return;
+      const rIsAllDay = r.startTime === '00:00' && r.endTime === '23:59';
+      const rStart = rIsAllDay ? 0 : timeToMins(r.startTime);
+      const rEnd = rIsAllDay ? 1439 : timeToMins(r.endTime);
+      if (selStart < rEnd && selEnd > rStart) ids.add(r.id);
+    });
+    return ids;
+  }, [roomReservations, startDate, startTime, endTime, isAllDay]);
+
   useEffect(() => {
     if (isRecurring && !prevIsRecurring.current && startDate) {
       const init = initFromDate(startDate);
@@ -139,12 +168,31 @@ const RoomReservePage: FC = () => {
 
   const handleStartDateChange = (v: string) => {
     setStartDate(v);
+    const effectiveEndDate = endDate < v ? v : endDate;
     if (endDate < v) setEndDate(v);
+    if (effectiveEndDate === v && !isAllDay && timeToMins(endTime) <= timeToMins(startTime)) {
+      setEndTime(minsToTime(timeToMins(startTime) + 10));
+    }
   };
 
   const handleStartTimeChange = (v: string) => {
+    if (startDate === toLocalDateStr() && v < toLocalTimeStr()) return;
     setStartTime(v);
-    if (v && endDate === startDate) setEndTime(nextHalfHourAfter(timeToMins(v)));
+    if (v && endDate === startDate && !isAllDay && timeToMins(endTime) <= timeToMins(v)) {
+      setEndTime(minsToTime(timeToMins(v) + 10));
+    }
+  };
+
+  const handleEndDateChange = (v: string) => {
+    setEndDate(v);
+    if (v === startDate && !isAllDay && timeToMins(endTime) <= timeToMins(startTime)) {
+      setEndTime(minsToTime(timeToMins(startTime) + 10));
+    }
+  };
+
+  const handleEndTimeChange = (v: string) => {
+    if (endDate === startDate && timeToMins(v) <= timeToMins(startTime)) return;
+    setEndTime(v);
   };
 
   const handleAllDayChange = (checked: boolean) => {
@@ -188,18 +236,17 @@ const RoomReservePage: FC = () => {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!startDate || !endDate || !attendeeCount || !meetingName.trim() || !reservedBy.trim()) {
-      alert('すべての項目を入力してください。');
-      return;
+      await dialog.alert('すべての項目を入力してください。', '入力エラー', 'warning'); return;
     }
-    const today = new Date().toISOString().slice(0, 10);
-    if (startDate < today) { alert('過去の日付には予約できません。'); return; }
-    if (endDate < startDate) { alert('終了日は開始日以降を指定してください。'); return; }
+    const today = toLocalDateStr();
+    if (startDate < today) { await dialog.alert('過去の日付には予約できません。', '入力エラー', 'warning'); return; }
+    if (endDate < startDate) { await dialog.alert('終了日は開始日以降を指定してください。', '入力エラー', 'warning'); return; }
     if (!isAllDay && endDate === startDate && timeToMins(endTime) <= timeToMins(startTime)) {
-      alert('終了時刻は開始時刻より後にしてください。'); return;
+      await dialog.alert('終了時刻は開始時刻より後にしてください。', '入力エラー', 'warning'); return;
     }
     const count = Number(attendeeCount);
-    if (!Number.isInteger(count) || count < 1) { alert('参加人数は1以上の整数を入力してください。'); return; }
-    if (room && count > room.capacity) { alert(`参加人数（${count}名）が定員（${room.capacity}名）を超えています。`); return; }
+    if (!Number.isInteger(count) || count < 1) { await dialog.alert('参加人数は1以上の整数を入力してください。', '入力エラー', 'warning'); return; }
+    if (room && count > room.capacity) { await dialog.alert(`参加人数（${count}名）が定員（${room.capacity}名）を超えています。`, '入力エラー', 'warning'); return; }
 
     const base = {
       roomId: room!.id, date: startDate, startTime: isAllDay ? '00:00' : startTime, endTime: isAllDay ? '23:59' : endTime, attendeeCount: count,
@@ -209,31 +256,31 @@ const RoomReservePage: FC = () => {
     if (!isRecurring) {
       try {
         await addReservation(base);
-        alert('予約しました。');
+        await dialog.alert('予約しました。', '完了', 'success');
         navigate('/reservations');
       } catch (err) {
-        alert('予約に失敗しました: ' + (err instanceof Error ? err.message : ''));
+        await dialog.alert('予約に失敗しました: ' + (err instanceof Error ? err.message : ''), 'エラー', 'error');
       }
       return;
     }
 
     const validErr = validateRecurring();
-    if (validErr) { alert(validErr); return; }
+    if (validErr) { await dialog.alert(validErr, '入力エラー', 'warning'); return; }
 
     try {
       const { created, skippedDates } = await addRecurringReservation(base, buildOpts());
       if (created === 0) {
-        alert('予約を作成できませんでした（すべての日程が重複しています）。\n\n重複日程:\n' + skippedDates.join('\n'));
+        await dialog.alert('予約を作成できませんでした（すべての日程が重複しています）。\n\n重複日程:\n' + skippedDates.join('\n'), 'エラー', 'error');
         return;
       }
       if (skippedDates.length > 0) {
-        alert(`${created}件の予約を登録しました。\n\n以下の${skippedDates.length}件は重複しているためスキップされました:\n` + skippedDates.join('\n'));
+        await dialog.alert(`${created}件の予約を登録しました。\n\n以下の${skippedDates.length}件は重複しているためスキップされました:\n` + skippedDates.join('\n'), '完了', 'success');
       } else {
-        alert(`${created}件の予約を登録しました。`);
+        await dialog.alert(`${created}件の予約を登録しました。`, '完了', 'success');
       }
       navigate('/reservations');
     } catch (err) {
-      alert('予約に失敗しました: ' + (err instanceof Error ? err.message : ''));
+      await dialog.alert('予約に失敗しました: ' + (err instanceof Error ? err.message : ''), 'エラー', 'error');
     }
   };
 
@@ -249,7 +296,8 @@ const RoomReservePage: FC = () => {
   }
 
   return (
-    <div className="max-w-2xl">
+    <div className="flex gap-6 items-start">
+      <div className="flex-1 min-w-0 max-w-2xl">
       <h2 className="text-base font-semibold border-l-4 border-slate-700 pl-2 mt-0 mb-3">
         会議室予約
       </h2>
@@ -265,13 +313,14 @@ const RoomReservePage: FC = () => {
             <Input
               type="date"
               value={startDate}
-              min={new Date().toISOString().slice(0, 10)}
+              min={toLocalDateStr()}
               onChange={(e) => handleStartDateChange(e.target.value)}
               className="w-auto"
             />
             <Input
               type="time"
               value={startTime}
+              min={startDate === toLocalDateStr() && !isAllDay ? toLocalTimeStr() : undefined}
               disabled={isAllDay}
               onChange={(e) => handleStartTimeChange(e.target.value)}
               className="w-auto"
@@ -296,14 +345,15 @@ const RoomReservePage: FC = () => {
               type="date"
               value={endDate}
               min={startDate}
-              onChange={(e) => setEndDate(e.target.value)}
+              onChange={(e) => handleEndDateChange(e.target.value)}
               className="w-auto"
             />
             <Input
               type="time"
               value={endTime}
+              min={endDate === startDate && !isAllDay ? startTime : undefined}
               disabled={isAllDay}
-              onChange={(e) => setEndTime(e.target.value)}
+              onChange={(e) => handleEndTimeChange(e.target.value)}
               className="w-auto"
             />
             <div className="flex items-center gap-1.5 ml-1">
@@ -318,6 +368,13 @@ const RoomReservePage: FC = () => {
             </div>
           </div>
         </div>
+
+        {conflictingIds.size > 0 && (
+          <p className="text-sm text-destructive flex items-center gap-1.5">
+            <AlertTriangle size={14} className="shrink-0" />
+            選択した時間帯に重複する予約があります。
+          </p>
+        )}
 
         {isRecurring && (
           <div className="border border-slate-200 rounded-lg p-4 bg-slate-50 space-y-4">
@@ -506,6 +563,18 @@ const RoomReservePage: FC = () => {
           </Link>
         </div>
       </form>
+      </div>
+
+      <div className="sticky top-0 pt-9">
+        <DayTimeline
+          reservations={roomReservations}
+          date={startDate}
+          previewStart={isAllDay ? '00:00' : startTime}
+          previewEnd={isAllDay ? '23:59' : endTime}
+          isAllDay={isAllDay}
+          conflictingIds={conflictingIds}
+        />
+      </div>
     </div>
   );
 };

@@ -1,6 +1,13 @@
-import React, { FC, useEffect, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
@@ -14,6 +21,7 @@ import {
 import SortableHead from '../components/SortableHead';
 import { useAuth } from '../contexts/AuthContext';
 import { useData } from '../contexts/DataContext';
+import { useDialog } from '../contexts/DialogContext';
 import { useSortFilter } from '../hooks/useSortFilter';
 import { Device, DeviceStatus } from '../types';
 import { formatElapsed, getLoanAlertInfo } from '../utils/loanAlerts';
@@ -41,6 +49,7 @@ const DeviceListPage: FC = () => {
   } = useData();
   const { currentUser } = useAuth();
   const isAdmin = currentUser?.role === 'admin';
+  const dialog = useDialog();
 
   useEffect(() => {
     reloadDevices();
@@ -93,29 +102,35 @@ const DeviceListPage: FC = () => {
   };
 
   const handleBorrowConfirm = async (id: string) => {
+    if (!expectedReturnAt) {
+      await dialog.alert('返却予定日時を入力してください', '入力エラー', 'warning');
+      return;
+    }
     try {
-      await borrowDevice(id, currentUser?.username || '', expectedReturnAt || undefined);
+      await borrowDevice(id, currentUser?.username || '', expectedReturnAt);
       setBorrowTargetId(null);
     } catch (e) {
-      alert('貸出に失敗しました: ' + (e instanceof Error ? e.message : ''));
+      await dialog.alert('貸出に失敗しました: ' + (e instanceof Error ? e.message : ''), 'エラー', 'error');
     }
   };
 
   const handleReturn = async (id: string, name: string) => {
-    if (!window.confirm(`「${name}」を返却します。よろしいですか？`)) return;
+    const ok = await dialog.confirm(`「${name}」を返却します。よろしいですか？`, { title: '返却の確認', confirmLabel: '返却する' });
+    if (!ok) return;
     try {
       await returnDevice(id);
     } catch (e) {
-      alert('返却に失敗しました: ' + (e instanceof Error ? e.message : ''));
+      await dialog.alert('返却に失敗しました: ' + (e instanceof Error ? e.message : ''), 'エラー', 'error');
     }
   };
 
   const handleDelete = async (id: string, name: string) => {
-    if (!window.confirm(`デバイス「${name}」を削除します。よろしいですか？`)) return;
+    const ok = await dialog.confirm(`デバイス「${name}」を削除します。よろしいですか？`, { title: '削除の確認', confirmLabel: '削除', variant: 'destructive' });
+    if (!ok) return;
     try {
       await deleteDevice(id);
     } catch (e) {
-      alert('削除に失敗しました: ' + (e instanceof Error ? e.message : ''));
+      await dialog.alert('削除に失敗しました: ' + (e instanceof Error ? e.message : ''), 'エラー', 'error');
     }
   };
 
@@ -237,8 +252,7 @@ const DeviceListPage: FC = () => {
               const loan = getLoanForDevice(d.id);
               const loanInfo = loan ? getLoanAlertInfo(loan) : null;
               return (
-                <React.Fragment key={d.id}>
-                  <TableRow>
+                <TableRow key={d.id}>
                     <TableCell>
                       <div className="flex items-center flex-wrap gap-1">
                         {d.name}
@@ -269,35 +283,45 @@ const DeviceListPage: FC = () => {
                     )}
                     <TableCell>
                       <div className="flex items-center gap-1.5 flex-wrap">
-                        {d.status === 'available' && (
+                        {d.status === 'available' ? (
                           <Button
                             type="button"
                             variant="outline"
                             size="sm"
+                            className="w-[5.5rem]"
                             onClick={() => handleBorrowClick(d.id)}
                           >
                             貸出
                           </Button>
-                        )}
-                        {d.status === 'inUse' && isBorrowedByMe(d.id) && (
+                        ) : d.status === 'inUse' && isBorrowedByMe(d.id) ? (
                           <Button
                             type="button"
                             variant="outline"
                             size="sm"
+                            className="w-[5.5rem]"
                             onClick={() => handleReturn(d.id, d.name)}
                           >
                             返却
                           </Button>
-                        )}
-                        {d.status === 'inUse' && !isBorrowedByMe(d.id) && isAdmin && (
+                        ) : d.status === 'inUse' && !isBorrowedByMe(d.id) && isAdmin ? (
                           <Button
                             type="button"
                             variant="outline"
                             size="sm"
-                            className="text-amber-600 border-amber-400/50 hover:bg-amber-50 hover:text-amber-700"
+                            className="w-[5.5rem] text-amber-600 border-amber-400/50 hover:bg-amber-50 hover:text-amber-700"
                             onClick={() => handleReturn(d.id, d.name)}
                           >
                             強制返却
+                          </Button>
+                        ) : (
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            className="w-[5.5rem]"
+                            disabled
+                          >
+                            貸出
                           </Button>
                         )}
                         {isAdmin && (
@@ -305,7 +329,7 @@ const DeviceListPage: FC = () => {
                             type="button"
                             variant="outline"
                             size="sm"
-                            className="text-destructive border-destructive/40 hover:bg-destructive/5 hover:text-destructive"
+                            className="w-[5.5rem] text-destructive border-destructive/40 hover:bg-destructive/5 hover:text-destructive"
                             onClick={() => handleDelete(d.id, d.name)}
                           >
                             削除
@@ -313,47 +337,55 @@ const DeviceListPage: FC = () => {
                         )}
                       </div>
                     </TableCell>
-                  </TableRow>
-                  {borrowTargetId === d.id && (
-                    <TableRow>
-                      <TableCell colSpan={colSpan} className="bg-slate-50">
-                        <div className="py-2">
-                          <p className="font-medium text-sm mb-3">「{d.name}」の貸出</p>
-                          <div className="flex items-center gap-3">
-                            <Label className="text-sm whitespace-nowrap">
-                              返却予定日時（任意）:
-                            </Label>
-                            <Input
-                              type="datetime-local"
-                              value={expectedReturnAt}
-                              onChange={(e) => setExpectedReturnAt(e.target.value)}
-                              min={minDateTime()}
-                              className="w-auto"
-                            />
-                          </div>
-                          <div className="flex items-center gap-2 mt-3">
-                            <Button type="button" size="sm" onClick={() => handleBorrowConfirm(d.id)}>
-                              貸出する
-                            </Button>
-                            <Button
-                              type="button"
-                              variant="outline"
-                              size="sm"
-                              onClick={() => setBorrowTargetId(null)}
-                            >
-                              キャンセル
-                            </Button>
-                          </div>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  )}
-                </React.Fragment>
+                </TableRow>
               );
             })
           )}
         </TableBody>
       </Table>
+
+      <Dialog
+        open={!!borrowTargetId}
+        onOpenChange={(open) => { if (!open) { setBorrowTargetId(null); setExpectedReturnAt(''); } }}
+      >
+        <DialogContent showCloseButton={false}>
+          <DialogHeader>
+            <DialogTitle>
+              「{devices.find((d) => d.id === borrowTargetId)?.name}」の貸出
+            </DialogTitle>
+          </DialogHeader>
+          <div className="flex items-center gap-3 py-1">
+            <Label className="text-sm whitespace-nowrap">
+              返却予定日時 <span className="text-destructive font-bold">*</span>
+            </Label>
+            <Input
+              type="datetime-local"
+              value={expectedReturnAt}
+              onChange={(e) => setExpectedReturnAt(e.target.value)}
+              min={minDateTime()}
+              className="w-auto"
+            />
+          </div>
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => { setBorrowTargetId(null); setExpectedReturnAt(''); }}
+            >
+              キャンセル
+            </Button>
+            <Button
+              type="button"
+              size="sm"
+              disabled={!expectedReturnAt}
+              onClick={() => borrowTargetId && handleBorrowConfirm(borrowTargetId)}
+            >
+              貸出する
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

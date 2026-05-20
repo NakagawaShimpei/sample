@@ -4,6 +4,7 @@ export interface User {
   username: string;
   role: Role;
   displayName: string;
+  email?: string | null;
 }
 
 export interface UserRecord {
@@ -11,6 +12,7 @@ export interface UserRecord {
   username: string;
   displayName: string;
   role: Role;
+  email?: string;
 }
 
 export interface Room {

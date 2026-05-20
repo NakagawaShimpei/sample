@@ -11,6 +11,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useData } from '../contexts/DataContext';
+import { useDialog } from '../contexts/DialogContext';
 import { DeviceType } from '../types';
 
 const deviceTypes: DeviceType[] = [
@@ -30,18 +31,20 @@ const DeviceRegisterPage: FC = () => {
   const [managementNumber, setManagementNumber] = useState('');
   const [type, setType] = useState('');
 
+  const dialog = useDialog();
+
   const handleSubmit = async (e: SubmitEvent): Promise<void> => {
     e.preventDefault();
     if (!name || !location || !managementNumber || !type) {
-      alert('すべての項目を入力してください。');
+      await dialog.alert('すべての項目を入力してください。', '入力エラー', 'warning');
       return;
     }
     try {
       await addDevice({ name, location, managementNumber, type: type as DeviceType });
-      alert('登録しました。');
+      await dialog.alert('デバイスを登録しました。', '完了', 'success');
       navigate('/devices');
     } catch (err) {
-      alert('登録に失敗しました: ' + (err instanceof Error ? err.message : ''));
+      await dialog.alert('登録に失敗しました: ' + (err instanceof Error ? err.message : ''), 'エラー', 'error');
     }
   };
 

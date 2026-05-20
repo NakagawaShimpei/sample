@@ -1,5 +1,5 @@
 import React, { FC, useState } from 'react';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -124,6 +124,14 @@ const LoginPage: FC = () => {
             {error && <p className="text-sm text-destructive text-center">{error}</p>}
             <Button type="submit" className="w-full">ログイン</Button>
           </form>
+          <div className="text-center mt-3">
+            <Link
+              to="/forgot-password"
+              className="text-sm text-muted-foreground hover:text-foreground underline-offset-4 hover:underline"
+            >
+              パスワードを忘れた場合
+            </Link>
+          </div>
         </CardContent>
       </Card>
     </div>

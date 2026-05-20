@@ -13,6 +13,7 @@ export interface UserRecord {
   password: string;
   displayName: string;
   role: Role;
+  email?: string;
   totpSecret?: string; // MFA設定済みの場合のみ存在
 }
 

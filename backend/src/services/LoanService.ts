@@ -37,7 +37,9 @@ const loanService = {
         throw Object.assign(new Error('返却予定日時は現在時刻より後にしてください'), { status: 400 });
       }
     }
-    return loanRepository.create(data);
+    const loan = await loanRepository.create(data);
+    await deviceRepository.update(data.deviceId, { status: 'inUse' });
+    return loan;
   },
 
   async delete(id: string): Promise<void> {

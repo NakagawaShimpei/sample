@@ -7,13 +7,19 @@ const userController = {
   },
 
   async create(req: Request, res: Response): Promise<void> {
-    const { username, password, displayName } = req.body as {
+    const { username, password, displayName, email } = req.body as {
       username: string;
       password: string;
       displayName: string;
+      email?: string;
     };
-    const user = await userService.create({ username, password, displayName });
-    res.status(201).json(user);
+    try {
+      const user = await userService.create({ username, password, displayName, email });
+      res.status(201).json(user);
+    } catch (e) {
+      const status = (e as { status?: number }).status ?? 500;
+      res.status(status).json({ error: (e as Error).message });
+    }
   },
 
   async remove(req: Request, res: Response): Promise<void> {

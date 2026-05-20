@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useData } from '../contexts/DataContext';
+import { useDialog } from '../contexts/DialogContext';
 
 const RoomRegisterPage: FC = () => {
   const { addRoom } = useData();
@@ -14,18 +15,20 @@ const RoomRegisterPage: FC = () => {
   const [capacity, setCapacity] = useState('');
   const [equipment, setEquipment] = useState('');
 
+  const dialog = useDialog();
+
   const handleSubmit = async (e: SubmitEvent): Promise<void> => {
     e.preventDefault();
     if (!name || !location || !capacity || !equipment) {
-      alert('すべての項目を入力してください。');
+      await dialog.alert('すべての項目を入力してください。', '入力エラー', 'warning');
       return;
     }
     try {
       await addRoom({ name, location, capacity: Number(capacity), equipment });
-      alert('登録しました。');
+      await dialog.alert('会議室を登録しました。', '完了', 'success');
       navigate('/rooms');
     } catch (err) {
-      alert('登録に失敗しました: ' + (err instanceof Error ? err.message : ''));
+      await dialog.alert('登録に失敗しました: ' + (err instanceof Error ? err.message : ''), 'エラー', 'error');
     }
   };
 

@@ -12,6 +12,7 @@ import {
 import SortableHead from '../components/SortableHead';
 import { useAuth } from '../contexts/AuthContext';
 import { useData } from '../contexts/DataContext';
+import { useDialog } from '../contexts/DialogContext';
 import { useSortFilter } from '../hooks/useSortFilter';
 import { UserRecord } from '../types';
 
@@ -31,22 +32,27 @@ const UserListPage: FC = () => {
         if (f.username && !u.username.toLowerCase().includes(f.username)) return false;
         if (f.displayName && !u.displayName.toLowerCase().includes(f.displayName)) return false;
         if (f.role && !(u.role === 'admin' ? '管理者' : '利用者').includes(f.role)) return false;
+        if (f.email && !(u.email ?? '').toLowerCase().includes(f.email)) return false;
         return true;
       },
       (u, key) => {
         if (key === 'username') return u.username;
         if (key === 'displayName') return u.displayName;
         if (key === 'role') return u.role;
+        if (key === 'email') return u.email ?? '';
         return '';
       },
     );
 
+  const dialog = useDialog();
+
   const handleDelete = async (id: string, name: string) => {
-    if (!window.confirm(`ユーザー「${name}」を削除します。よろしいですか？`)) return;
+    const ok = await dialog.confirm(`ユーザー「${name}」を削除します。よろしいですか？`, { title: '削除の確認', confirmLabel: '削除', variant: 'destructive' });
+    if (!ok) return;
     try {
       await deleteUser(id);
     } catch (e) {
-      alert('削除に失敗しました: ' + (e instanceof Error ? e.message : ''));
+      await dialog.alert('削除に失敗しました: ' + (e instanceof Error ? e.message : ''), 'エラー', 'error');
     }
   };
 
@@ -80,19 +86,21 @@ const UserListPage: FC = () => {
             <SortableHead sortKey="username" currentSortKey={sortKey} currentSortDir={sortDir} onToggle={toggleSort}>ユーザー名</SortableHead>
             <SortableHead sortKey="displayName" currentSortKey={sortKey} currentSortDir={sortDir} onToggle={toggleSort}>表示名</SortableHead>
             <SortableHead sortKey="role" currentSortKey={sortKey} currentSortDir={sortDir} onToggle={toggleSort}>ロール</SortableHead>
+            <SortableHead sortKey="email" currentSortKey={sortKey} currentSortDir={sortDir} onToggle={toggleSort}>メールアドレス</SortableHead>
             <TableHead>操作</TableHead>
           </TableRow>
           <TableRow className="bg-muted/20 hover:bg-muted/20">
             <TableHead className="py-1">{fi('username')}</TableHead>
             <TableHead className="py-1">{fi('displayName')}</TableHead>
             <TableHead className="py-1">{fi('role')}</TableHead>
+            <TableHead className="py-1">{fi('email')}</TableHead>
             <TableHead className="py-1" />
           </TableRow>
         </TableHeader>
         <TableBody>
           {items.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={4} className="text-center text-muted-foreground py-6">
+              <TableCell colSpan={5} className="text-center text-muted-foreground py-6">
                 該当するユーザーがありません
               </TableCell>
             </TableRow>
@@ -102,6 +110,7 @@ const UserListPage: FC = () => {
                 <TableCell>{u.username}</TableCell>
                 <TableCell>{u.displayName}</TableCell>
                 <TableCell>{u.role === 'admin' ? '管理者' : '利用者'}</TableCell>
+                <TableCell className="text-muted-foreground">{u.email ?? '-'}</TableCell>
                 <TableCell>
                   {u.role === 'user' && u.username !== currentUser?.username ? (
                     <Button
