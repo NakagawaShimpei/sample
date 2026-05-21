@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { config } from '../config';
 import { userRepository } from '../repositories/UserRepository';
 import authService, { TokenPayload } from '../services/AuthService';
+import { decryptSecret, encryptSecret } from '../services/CryptoService';
 import mfaService from '../services/MfaService';
 import { UserRecord } from '../types';
 
@@ -33,7 +34,7 @@ const mfaController = {
     }
     const userId = req.user!.userId;
     await userRepository.update(userId, {
-      totpSecret: secret,
+      totpSecret: encryptSecret(secret, config.TOTP_ENCRYPTION_KEY),
     } as Partial<UserRecord>);
     res.json({ message: 'MFA が有効になりました' });
   },
@@ -53,7 +54,10 @@ const mfaController = {
     }
 
     const user = userRepository.findByUsername(pending.username);
-    if (!user?.totpSecret || !mfaService.verifyToken(user.totpSecret, code)) {
+    const totpSecret = user?.totpSecret
+      ? decryptSecret(user.totpSecret, config.TOTP_ENCRYPTION_KEY)
+      : null;
+    if (!totpSecret || !mfaService.verifyToken(totpSecret, code)) {
       res.status(401).json({ error: 'コードが正しくありません' });
       return;
     }

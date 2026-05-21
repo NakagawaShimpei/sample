@@ -1,8 +1,8 @@
 import { FC } from 'react';
 import { Reservation } from '../types';
 
-const START_HOUR = 7;
-const END_HOUR = 22;
+const START_HOUR = 0;
+const END_HOUR = 24;
 const TOTAL_HOURS = END_HOUR - START_HOUR;
 const PX_PER_HOUR = 44;
 const TOTAL_HEIGHT = TOTAL_HOURS * PX_PER_HOUR;

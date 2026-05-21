@@ -7,8 +7,16 @@ if (!JWT_SECRET) {
   );
 }
 
+const TOTP_ENCRYPTION_KEY = process.env.TOTP_ENCRYPTION_KEY;
+if (!TOTP_ENCRYPTION_KEY || Buffer.from(TOTP_ENCRYPTION_KEY, 'hex').length !== 32) {
+  throw new Error(
+    '環境変数 TOTP_ENCRYPTION_KEY が設定されていません。64文字の16進数文字列を設定してください。',
+  );
+}
+
 export const config = {
   JWT_SECRET,
+  TOTP_ENCRYPTION_KEY: TOTP_ENCRYPTION_KEY as string,
   JWT_EXPIRES_IN: '24h',
   PORT: Number(process.env.PORT) || 3001,
   INACTIVITY_TIMEOUT_MS:

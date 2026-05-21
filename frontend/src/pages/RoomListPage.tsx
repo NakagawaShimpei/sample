@@ -1,8 +1,6 @@
-import { FC, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { Button, buttonVariants } from '@/components/ui/button';
+import { FC, useEffect, useState } from 'react';
+import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { cn } from '@/lib/utils';
 import {
   Table,
   TableBody,
@@ -11,6 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import RoomReserveDialog from '../components/RoomReserveDialog';
 import SortableHead from '../components/SortableHead';
 import { useAuth } from '../contexts/AuthContext';
 import { useData } from '../contexts/DataContext';
@@ -53,6 +52,7 @@ const RoomListPage: FC = () => {
     );
 
   const dialog = useDialog();
+  const [reserveRoomId, setReserveRoomId] = useState<string | null>(null);
 
   const handleDelete = async (id: string, name: string) => {
     const ok = await dialog.confirm(`会議室「${name}」を削除します。よろしいですか？`, { title: '削除の確認', confirmLabel: '削除', variant: 'destructive' });
@@ -130,12 +130,14 @@ const RoomListPage: FC = () => {
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center gap-1.5">
-                    <Link
-                      to={`/rooms/${room.id}/reserve`}
-                      className={cn(buttonVariants({ variant: 'outline', size: 'sm' }))}
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setReserveRoomId(room.id)}
                     >
                       予約する
-                    </Link>
+                    </Button>
                     {isAdmin && (
                       <Button
                         type="button"
@@ -154,6 +156,7 @@ const RoomListPage: FC = () => {
           )}
         </TableBody>
       </Table>
+      <RoomReserveDialog roomId={reserveRoomId} onClose={() => setReserveRoomId(null)} />
     </div>
   );
 };

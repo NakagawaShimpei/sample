@@ -31,6 +31,13 @@ const passwordResetService = {
     // ユーザーが見つからなくてもエラーを返さない（メールアドレス列挙攻撃対策）
     if (!user) return;
 
+    // 同一ユーザーの既存トークンを無効化（並行して複数の有効トークンが存在しないようにする）
+    for (const [existingToken, entry] of tokenStore.entries()) {
+      if (entry.userId === user.id) {
+        tokenStore.delete(existingToken);
+      }
+    }
+
     const token = crypto.randomBytes(32).toString('hex');
     tokenStore.set(token, {
       userId: user.id,
@@ -68,6 +75,20 @@ const passwordResetService = {
     const userId = this.verifyToken(token);
     if (userId) tokenStore.delete(token);
     return userId;
+  },
+
+  async sendPasswordChangedEmail(email: string): Promise<void> {
+    const transporter = createTransporter();
+    await transporter.sendMail({
+      from: `"WE サンプルアプリ" <${config.SMTP.from}>`,
+      to: email,
+      subject: 'パスワードが変更されました',
+      text: `パスワードが再設定されました。\n\nこの操作に心当たりがない場合は、すぐにサポートまでご連絡ください。`,
+      html: `
+        <p>パスワードが再設定されました。</p>
+        <p style="color:#dc2626;">この操作に心当たりがない場合は、すぐにサポートまでご連絡ください。</p>
+      `,
+    });
   },
 };
 

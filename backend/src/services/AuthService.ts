@@ -1,14 +1,27 @@
-import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { config } from '../config';
 import { userRepository } from '../repositories/UserRepository';
 import { Role } from '../types';
+import { verifyPassword } from './CryptoService';
 
 export interface TokenPayload {
   userId: string;
   username: string;
   role: Role;
   displayName: string;
+}
+
+// パスワード変更時に古いセッションを失効させるためのMap (userId -> 失効基準時刻ms)
+const revokedBefore = new Map<string, number>();
+
+export function revokeUserSessions(userId: string): void {
+  revokedBefore.set(userId, Date.now());
+}
+
+export function isSessionRevoked(userId: string, iatSeconds: number): boolean {
+  const threshold = revokedBefore.get(userId);
+  if (!threshold) return false;
+  return iatSeconds * 1000 < threshold;
 }
 
 export interface PublicUser {
@@ -27,7 +40,7 @@ const authService = {
     const user = userRepository.findByUsername(username);
     if (!user) return null;
 
-    const match = await bcrypt.compare(password, user.password);
+    const match = await verifyPassword(password, user.password);
     if (!match) return null;
 
     if (user.totpSecret) {
@@ -60,9 +73,9 @@ const authService = {
     return jwt.sign(payload, config.JWT_SECRET, { expiresIn: '24h' });
   },
 
-  verifyToken(token: string): TokenPayload | null {
+  verifyToken(token: string): (TokenPayload & { iat: number }) | null {
     try {
-      return jwt.verify(token, config.JWT_SECRET) as TokenPayload;
+      return jwt.verify(token, config.JWT_SECRET) as TokenPayload & { iat: number };
     } catch {
       return null;
     }

@@ -1,9 +1,8 @@
-import bcrypt from 'bcrypt';
 import { Request, Response } from 'express';
 import { config } from '../config';
 import { userRepository } from '../repositories/UserRepository';
-import authService, { TokenPayload } from '../services/AuthService';
-import { SALT_ROUNDS } from '../services/UserService';
+import authService, { TokenPayload, revokeUserSessions } from '../services/AuthService';
+import { hashPassword, verifyPassword } from '../services/CryptoService';
 import passwordResetService from '../services/PasswordResetService';
 
 const authController = {
@@ -93,11 +92,18 @@ const authController = {
     const user = userRepository.findById(req.user!.userId);
     if (!user) { res.status(404).json({ error: 'ユーザーが見つかりません' }); return; }
 
-    const match = await bcrypt.compare(currentPassword, user.password);
+    const match = await verifyPassword(currentPassword, user.password);
     if (!match) { res.status(400).json({ error: '現在のパスワードが正しくありません' }); return; }
 
-    const hashed = await bcrypt.hash(newPassword, SALT_ROUNDS);
+    const hashed = await hashPassword(newPassword);
     await userRepository.update(user.id, { password: hashed });
+    revokeUserSessions(user.id);
+    res.clearCookie('auth_token', {
+      httpOnly: config.COOKIE_OPTIONS.httpOnly,
+      sameSite: config.COOKIE_OPTIONS.sameSite,
+      secure: config.COOKIE_OPTIONS.secure,
+      path: config.COOKIE_OPTIONS.path,
+    });
     res.json({ message: 'パスワードを変更しました' });
   },
 
@@ -127,8 +133,13 @@ const authController = {
       res.status(400).json({ error: 'トークンが無効または期限切れです' });
       return;
     }
-    const hashed = await bcrypt.hash(newPassword, SALT_ROUNDS);
+    const hashed = await hashPassword(newPassword);
     await userRepository.update(userId, { password: hashed });
+    revokeUserSessions(userId);
+    const user = userRepository.findById(userId);
+    if (user?.email) {
+      await passwordResetService.sendPasswordChangedEmail(user.email).catch(() => {});
+    }
     res.json({ message: 'パスワードを再設定しました' });
   },
 };

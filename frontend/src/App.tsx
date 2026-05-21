@@ -15,7 +15,6 @@ import ReservationListPage from './pages/ReservationListPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
 import RoomListPage from './pages/RoomListPage';
 import RoomRegisterPage from './pages/RoomRegisterPage';
-import RoomReservePage from './pages/RoomReservePage';
 import UserListPage from './pages/UserListPage';
 import UserRegisterPage from './pages/UserRegisterPage';
 
@@ -38,10 +37,6 @@ function App() {
             >
               <Route path="/" element={<Navigate to="/rooms" replace />} />
               <Route path="/rooms" element={<RoomListPage />} />
-              <Route
-                path="/rooms/:roomId/reserve"
-                element={<RoomReservePage />}
-              />
               <Route path="/reservations" element={<ReservationListPage />} />
               <Route
                 path="/rooms/register"
