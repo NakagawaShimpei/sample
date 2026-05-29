@@ -20,7 +20,6 @@ import { useAuth } from '../contexts/AuthContext';
 import { useData } from '../contexts/DataContext';
 import { getLoanAlertInfo } from '../utils/loanAlerts';
 import ChatPanel from './ChatPanel';
-import NotificationBell from './NotificationBell';
 
 interface NavItemProps {
   to: string;
@@ -128,7 +127,7 @@ const Layout: FC = () => {
 
           {/* 設定 */}
           <div className="py-2">
-            <NavItem to="/mfa/setup" icon={<Settings size={ICON_SIZE} />}>設定</NavItem>
+            <NavItem to="/setup" icon={<Settings size={ICON_SIZE} />}>設定</NavItem>
           </div>
 
           <Separator className="bg-white/8" />
@@ -142,7 +141,6 @@ const Layout: FC = () => {
               </p>
             </div>
             <div className="flex items-center gap-1 shrink-0">
-              <NotificationBell />
               <Button
                 type="button"
                 variant="ghost"

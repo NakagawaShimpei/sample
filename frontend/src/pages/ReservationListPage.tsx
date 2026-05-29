@@ -45,9 +45,7 @@ const ReservationListPage: FC = () => {
   const dialog = useDialog();
   const [cancelTarget, setCancelTarget] = useState<Reservation | null>(null);
 
-  const visible = isAdmin
-    ? reservations
-    : reservations.filter((r) => r.reservedBy === currentUser?.username);
+  const visible = reservations;
 
   const roomName = (id: string) => rooms.find((r) => r.id === id)?.name || '(削除済み)';
 

@@ -189,6 +189,29 @@ const reservationService = {
     return reservationRepository.findAll();
   },
 
+  findByUsername(username: string): Reservation[] {
+    return reservationRepository.findWhere((r) => r.reservedBy === username);
+  },
+
+  findByRoomAndDate(roomId: string, date: string): Reservation[] {
+    return reservationRepository.findWhere((r) => r.roomId === roomId && r.date === date);
+  },
+
+  checkConflict(
+    roomId: string,
+    date: string,
+    startTime: string,
+    endTime: string,
+  ): { hasConflict: boolean; conflictingIds: string[] } {
+    const existing = reservationRepository.findWhere((r) => r.roomId === roomId && r.date === date);
+    const candidate = { roomId, date, startTime, endTime, attendeeCount: 1, meetingName: '', reservedBy: '', participants: '' };
+    const conflicting = existing.filter((r) => hasOverlap(r, candidate));
+    return {
+      hasConflict: conflicting.length > 0,
+      conflictingIds: conflicting.map((r) => r.id),
+    };
+  },
+
   async create(data: Omit<Reservation, 'id'>): Promise<Reservation> {
     const room = roomRepository.findById(data.roomId);
     if (!room) {

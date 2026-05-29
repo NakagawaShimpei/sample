@@ -1,7 +1,10 @@
 import Anthropic from '@anthropic-ai/sdk';
 import { Request, Response } from 'express';
+import { deviceRepository } from '../repositories/DeviceRepository';
+import { loanRepository } from '../repositories/LoanRepository';
 import { reservationRepository } from '../repositories/ReservationRepository';
 import { roomRepository } from '../repositories/RoomRepository';
+import loanService from '../services/LoanService';
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
@@ -50,9 +53,42 @@ const tools: Anthropic.Tool[] = [
       required: ['roomId', 'date', 'startTime', 'endTime', 'attendeeCount', 'meetingName'],
     },
   },
+  {
+    name: 'list_devices',
+    description: '登録されているデバイスの一覧を取得します。名前・種別・管理番号・場所・ステータス（available=利用可能、inUse=貸出中、maintenance=メンテナンス中）を含みます。',
+    input_schema: { type: 'object', properties: {}, required: [] },
+  },
+  {
+    name: 'list_my_loans',
+    description: '自分が現在借りているデバイスの一覧を取得します。',
+    input_schema: { type: 'object', properties: {}, required: [] },
+  },
+  {
+    name: 'borrow_device',
+    description: 'デバイスを借ります。借用者名は自動設定されます。デバイスが利用可能かどうかを list_devices で確認してから呼び出してください。',
+    input_schema: {
+      type: 'object',
+      properties: {
+        deviceId: { type: 'string', description: 'デバイスID' },
+        expectedReturnAt: { type: 'string', description: '返却予定日時 (YYYY-MM-DDTHH:MM、任意)' },
+      },
+      required: ['deviceId'],
+    },
+  },
+  {
+    name: 'return_device',
+    description: '借りているデバイスを返却します。自分が借りているデバイスのみ返却できます。',
+    input_schema: {
+      type: 'object',
+      properties: {
+        deviceId: { type: 'string', description: '返却するデバイスID' },
+      },
+      required: ['deviceId'],
+    },
+  },
 ];
 
-type ToolName = 'list_rooms' | 'list_reservations' | 'create_reservation';
+type ToolName = 'list_rooms' | 'list_reservations' | 'create_reservation' | 'list_devices' | 'list_my_loans' | 'borrow_device' | 'return_device';
 
 interface ListReservationsInput {
   date?: string;
@@ -67,6 +103,15 @@ interface CreateReservationInput {
   attendeeCount: number;
   meetingName: string;
   participants?: string;
+}
+
+interface BorrowDeviceInput {
+  deviceId: string;
+  expectedReturnAt?: string;
+}
+
+interface ReturnDeviceInput {
+  deviceId: string;
 }
 
 function toMins(t: string): number {
@@ -135,25 +180,62 @@ async function runTool(name: ToolName, input: unknown, reservedBy: string, isAdm
     return { success: true, reservation: saved };
   }
 
+  if (name === 'list_devices') {
+    return deviceRepository.findAll();
+  }
+
+  if (name === 'list_my_loans') {
+    const loans = loanRepository.findWhere((l) => l.borrowedBy === borrowedBy);
+    return loans.map((l) => ({
+      ...l,
+      deviceName: deviceRepository.findById(l.deviceId)?.name ?? '(削除済み)',
+    }));
+  }
+
+  if (name === 'borrow_device') {
+    const { deviceId, expectedReturnAt } = input as BorrowDeviceInput;
+    try {
+      const loan = await loanService.create({
+        deviceId,
+        borrowedBy,
+        borrowedAt: new Date().toISOString(),
+        expectedReturnAt,
+      });
+      return { success: true, loan, deviceName: deviceRepository.findById(deviceId)?.name };
+    } catch (e) {
+      return { error: (e as Error).message };
+    }
+  }
+
+  if (name === 'return_device') {
+    const { deviceId } = input as ReturnDeviceInput;
+    const loan = loanRepository.findWhere((l) => l.deviceId === deviceId && l.borrowedBy === borrowedBy);
+    if (loan.length === 0) return { error: 'このデバイスの貸出が見つかりません（自分が借りているデバイスのみ返却できます）' };
+    const deviceName = deviceRepository.findById(deviceId)?.name;
+    await loanService.deleteByDevice(deviceId);
+    return { success: true, deviceName };
+  }
+
   return { error: '不明なツール' };
 }
 
-const SYSTEM_PROMPT = `あなたは会議室予約サポートAIです。ユーザーが自然言語で会議室の空き確認や予約を行えるよう支援します。
+const SYSTEM_PROMPT = `あなたは社内サポートAIです。会議室の予約・確認と、デバイスの貸し出し・返却を支援します。
 
-ツールを使って会議室情報や予約状況を調べ、予約に必要な情報が揃ったら create_reservation を呼び出してください。
+【会議室予約】
+list_rooms・list_reservations で空き状況を確認し、情報が揃ったら create_reservation を呼び出してください。
+必要な情報: 会議室、日付、開始・終了時刻、参加人数、会議名。
+日付はYYYY-MM-DD、時刻はHH:MM形式で扱ってください。
 
-予約に必要な情報（ユーザーに確認すべき項目）:
-- 会議室（空き状況を確認して候補を提示してください）
-- 日付
-- 開始・終了時刻
-- 参加人数
-- 会議名
+【デバイス貸し出し】
+list_devices で利用可能なデバイスを確認し、borrow_device を呼び出してください。
+必要な情報: デバイス（一覧から選択）、返却予定日時（任意、YYYY-MM-DDTHH:MM形式）。
 
-予約者名は「{RESERVED_BY}」に自動設定されます。絶対にユーザーへ聞かないでください。
+【デバイス返却】
+list_my_loans で現在の貸出状況を確認し、return_device を呼び出してください。
 
-日付は必ずYYYY-MM-DD形式、時刻はHH:MM形式で扱ってください。
+予約者名・借用者名は「{RESERVED_BY}」に自動設定されます。絶対にユーザーへ聞かないでください。
 今日の日付は {TODAY} です。
-足りない情報は丁寧に聞いてください。`;
+足りない情報は丁寧に確認してください。`;
 
 export const chatController = {
   async chat(req: Request, res: Response): Promise<void> {

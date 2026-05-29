@@ -16,6 +16,10 @@ const loanService = {
     return loanRepository.findAll();
   },
 
+  findByUsername(username: string): Loan[] {
+    return loanRepository.findWhere((l) => l.borrowedBy === username);
+  },
+
   async create(data: Omit<Loan, 'id'>): Promise<Loan> {
     const device = deviceRepository.findById(data.deviceId);
     if (!device) {

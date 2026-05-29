@@ -4,6 +4,7 @@ import { authenticate } from '../middleware/authenticate';
 
 const router = Router();
 
+router.get('/check-conflict', authenticate, reservationController.checkConflict);
 router.get('/', authenticate, reservationController.list);
 router.post('/recurring', authenticate, reservationController.createRecurring);
 router.post('/', authenticate, reservationController.create);

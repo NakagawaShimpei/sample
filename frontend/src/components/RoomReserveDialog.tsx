@@ -11,10 +11,11 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { AlertTriangle } from 'lucide-react';
 import { FC, FormEvent, useEffect, useMemo, useRef, useState } from 'react';
+import { api } from '../api';
 import { useAuth } from '../contexts/AuthContext';
 import { useData } from '../contexts/DataContext';
 import { useDialog } from '../contexts/DialogContext';
-import { RecurringOptions, RecurringPatternType } from '../types';
+import { RecurringOptions, RecurringPatternType, Reservation } from '../types';
 import DayTimeline from './DayTimeline';
 
 const timeToMins = (t: string): number => {
@@ -118,22 +119,18 @@ const RoomReserveDialogContent: FC<{ roomId: string; onClose: () => void }> = ({
 }) => {
   const {
     rooms,
-    reservations,
     addReservation,
     addRecurringReservation,
     reloadRooms,
-    reloadReservations,
   } = useData();
   const { currentUser } = useAuth();
   const dialog = useDialog();
 
   useEffect(() => {
     reloadRooms();
-    reloadReservations();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const roomReservations = reservations.filter((r) => r.roomId === roomId);
   const room = rooms.find((r) => r.id === roomId);
 
   const [startDate, setStartDate] = useState(toLocalDateStr);
@@ -181,21 +178,36 @@ const RoomReserveDialogContent: FC<{ roomId: string; onClose: () => void }> = ({
   const [recurEndDate, setRecurEndDate] = useState('');
   const [recurCount, setRecurCount] = useState(10);
 
-  const conflictingIds = useMemo(() => {
-    const ids = new Set<string>();
-    if (!startDate) return ids;
-    const selStart = isAllDay ? 0 : timeToMins(startTime);
-    const selEnd = isAllDay ? 1439 : timeToMins(endTime);
-    if (!isAllDay && selEnd <= selStart) return ids;
-    roomReservations.forEach((r) => {
-      if (r.date !== startDate) return;
-      const rIsAllDay = r.startTime === '00:00' && r.endTime === '23:59';
-      const rStart = rIsAllDay ? 0 : timeToMins(r.startTime);
-      const rEnd = rIsAllDay ? 1439 : timeToMins(r.endTime);
-      if (selStart < rEnd && selEnd > rStart) ids.add(r.id);
-    });
-    return ids;
-  }, [roomReservations, startDate, startTime, endTime, isAllDay]);
+  const [dateReservations, setDateReservations] = useState<Reservation[]>([]);
+  const [conflictingIds, setConflictingIds] = useState<Set<string>>(new Set());
+
+  useEffect(() => {
+    if (!startDate) return;
+    api.listReservationsByRoomDate(roomId, startDate)
+      .then(setDateReservations)
+      .catch(() => {});
+  }, [roomId, startDate]);
+
+  useEffect(() => {
+    if (!startDate) { setConflictingIds(new Set()); return; }
+    const effectiveStart = isAllDay ? '00:00' : startTime;
+    const effectiveEnd = isAllDay ? '23:59' : endTime;
+    if (!isAllDay && timeToMins(effectiveEnd) <= timeToMins(effectiveStart)) {
+      setConflictingIds(new Set()); return;
+    }
+    const timer = setTimeout(() => {
+      api.checkConflict({ roomId, date: startDate, startTime: effectiveStart, endTime: effectiveEnd })
+        .then((r) => setConflictingIds(new Set(r.conflictingIds)))
+        .catch(() => setConflictingIds(new Set()));
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [roomId, startDate, startTime, endTime, isAllDay]);
+
+  const hasCapacityError = useMemo(() => {
+    if (!room) return false;
+    const count = Number(attendeeCount);
+    return Number.isInteger(count) && count >= 1 && count > room.capacity;
+  }, [room, attendeeCount]);
 
   useEffect(() => {
     if (isRecurring && !prevIsRecurring.current && startDate) {
@@ -529,14 +541,17 @@ const RoomReserveDialogContent: FC<{ roomId: string; onClose: () => void }> = ({
                 </label>
               </div>
             </div>
-          </div>
 
-          {conflictingIds.size > 0 && (
-            <p className="text-sm text-destructive flex items-center gap-1.5">
-              <AlertTriangle size={14} className="shrink-0" />
-              選択した時間帯に重複する予約があります。
-            </p>
-          )}
+            {conflictingIds.size > 0 && (
+              <>
+                <div />
+                <p className="text-sm text-destructive flex items-center gap-1.5">
+                  <AlertTriangle size={14} className="shrink-0" />
+                  選択した時間帯に重複する予約があります。
+                </p>
+              </>
+            )}
+          </div>
 
           {isRecurring && (
             <div className="border border-slate-200 rounded-lg p-4 bg-slate-50 space-y-4">
@@ -897,18 +912,26 @@ const RoomReserveDialogContent: FC<{ roomId: string; onClose: () => void }> = ({
             <Label className="pt-1.5">
               人数 <span className="text-destructive font-bold">*</span>
             </Label>
-            <div className="flex items-center gap-2">
-              <Input
-                type="number"
-                min="1"
-                max={room.capacity}
-                value={attendeeCount}
-                onChange={(e) => setAttendeeCount(e.target.value)}
-                className="w-24"
-              />
-              <span className="text-xs text-muted-foreground">
-                （定員: {room.capacity}名）
-              </span>
+            <div className="space-y-1">
+              <div className="flex items-center gap-2">
+                <Input
+                  type="number"
+                  min="1"
+                  max={room.capacity}
+                  value={attendeeCount}
+                  onChange={(e) => setAttendeeCount(e.target.value)}
+                  className="w-24"
+                />
+                <span className="text-xs text-muted-foreground">
+                  （定員: {room.capacity}名）
+                </span>
+              </div>
+              {hasCapacityError && (
+                <p className="text-sm text-destructive flex items-center gap-1.5">
+                  <AlertTriangle size={14} className="shrink-0" />
+                  参加人数が定員（{room.capacity}名）を超えています。
+                </p>
+              )}
             </div>
 
             <Label className="pt-1.5">
@@ -945,7 +968,7 @@ const RoomReserveDialogContent: FC<{ roomId: string; onClose: () => void }> = ({
             ※ 参加者以外の項目は必須です。
           </p>
           <div className="flex items-center gap-3">
-            <Button type="submit">
+            <Button type="submit" disabled={conflictingIds.size > 0 || hasCapacityError}>
               {isRecurring ? '繰り返し予約する' : '予約する'}
             </Button>
             <Button type="button" variant="outline" onClick={onClose}>
@@ -960,7 +983,7 @@ const RoomReserveDialogContent: FC<{ roomId: string; onClose: () => void }> = ({
         className="shrink-0 pt-9 overflow-y-auto overflow-x-hidden"
       >
         <DayTimeline
-          reservations={roomReservations}
+          reservations={dateReservations}
           date={startDate}
           previewStart={isAllDay ? '00:00' : startTime}
           previewEnd={isAllDay ? '23:59' : endTime}

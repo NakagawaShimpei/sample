@@ -47,6 +47,12 @@ export const api = {
     request<void>(`/rooms/${id}`, { method: 'DELETE' }),
 
   listReservations: () => request<Reservation[]>('/reservations'),
+  listReservationsByRoomDate: (roomId: string, date: string) =>
+    request<Reservation[]>(`/reservations?roomId=${encodeURIComponent(roomId)}&date=${encodeURIComponent(date)}`),
+  checkConflict: (params: { roomId: string; date: string; startTime: string; endTime: string }) =>
+    request<{ hasConflict: boolean; conflictingIds: string[] }>(
+      `/reservations/check-conflict?${new URLSearchParams(params).toString()}`,
+    ),
   createReservation: (reservation: Omit<Reservation, 'id'>) =>
     request<Reservation>('/reservations', {
       method: 'POST',

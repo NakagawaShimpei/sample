@@ -71,7 +71,7 @@ function App() {
                   </ProtectedRoute>
                 }
               />
-              <Route path="/mfa/setup" element={<MfaSetupPage />} />
+              <Route path="/setup" element={<MfaSetupPage />} />
               <Route
                 path="/dashboard"
                 element={

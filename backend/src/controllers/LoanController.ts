@@ -3,8 +3,13 @@ import loanService from '../services/LoanService';
 import { Loan } from '../types';
 
 const loanController = {
-  list(_req: Request, res: Response): void {
-    res.json(loanService.findAll());
+  list(req: Request, res: Response): void {
+    const { username, role } = req.user!;
+    if (role === 'admin') {
+      res.json(loanService.findAll());
+    } else {
+      res.json(loanService.findByUsername(username));
+    }
   },
 
   async create(req: Request, res: Response): Promise<void> {

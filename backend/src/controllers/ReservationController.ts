@@ -10,8 +10,19 @@ function toMins(t: string): number {
   return h * 60 + m;
 }
 
+function isActiveReservation(r: Reservation): boolean {
+  const now = new Date();
+  const nowDatetime =
+    `${now.getFullYear()}-` +
+    `${String(now.getMonth() + 1).padStart(2, '0')}-` +
+    `${String(now.getDate()).padStart(2, '0')}T` +
+    `${String(now.getHours()).padStart(2, '0')}:` +
+    `${String(now.getMinutes()).padStart(2, '0')}`;
+  return (r.date + 'T' + r.endTime) > nowDatetime;
+}
+
 function validateReservationBase(data: Omit<Reservation, 'id'>): string | null {
-  const { roomId, date, startTime, endTime, attendeeCount, meetingName, reservedBy, participants } = data;
+  const { roomId, date, startTime, endTime, attendeeCount, meetingName, reservedBy } = data;
 
   if (!roomId || !date || !startTime || !endTime || !meetingName?.trim() || !reservedBy?.trim()) {
     return '必須項目が不足しています';
@@ -35,8 +46,28 @@ function validateReservationBase(data: Omit<Reservation, 'id'>): string | null {
 }
 
 const reservationController = {
-  list(_req: Request, res: Response): void {
-    res.json(reservationService.findAll());
+  list(req: Request, res: Response): void {
+    const { roomId, date } = req.query as { roomId?: string; date?: string };
+    if (roomId && date) {
+      res.json(reservationService.findByRoomAndDate(roomId, date));
+      return;
+    }
+    const { username, role } = req.user!;
+    const reservations = role === 'admin'
+      ? reservationService.findAll()
+      : reservationService.findByUsername(username);
+    res.json(reservations.filter(isActiveReservation));
+  },
+
+  checkConflict(req: Request, res: Response): void {
+    const { roomId, date, startTime, endTime } = req.query as {
+      roomId?: string; date?: string; startTime?: string; endTime?: string;
+    };
+    if (!roomId || !date || !startTime || !endTime) {
+      res.status(400).json({ error: 'roomId, date, startTime, endTime は必須です' });
+      return;
+    }
+    res.json(reservationService.checkConflict(roomId, date, startTime, endTime));
   },
 
   async create(req: Request, res: Response): Promise<void> {
